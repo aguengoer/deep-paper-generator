@@ -1,0 +1,104 @@
+[
+  {
+    "id": "0001",
+    "submitter": "John Doe",
+    "authors": "A. Smith, B. Johnson",
+    "title": "Machine Learning Techniques for Data Analysis",
+    "comments": "15 pages, 7 figures",
+    "journal-ref": "Data Science Journal, Vol 12, 2023",
+    "doi": "10.1109/DSJ.2023.0001",
+    "report-no": "DS-PR-2023-01",
+    "categories": "cs.LG",
+    "license": null,
+    "abstract": "We propose novel machine learning techniques for data analysis, including...",
+    "versions": [
+      {
+        "version": "v1",
+        "created": "2023-03-01"
+      },
+      {
+        "version": "v2",
+        "created": "2023-03-15"
+      }
+    ],
+    "update_date": "2023-03-15",
+    "authors_parsed": [
+      [
+        "Smith",
+        "A."
+      ],
+      [
+        "Johnson",
+        "B."
+      ]
+    ]
+  },
+  {
+    "id": "0002",
+    "submitter": "Jane Smith",
+    "authors": "C. Brown, D. Williams",
+    "title": "Deep Reinforcement Learning in Autonomous Systems",
+    "comments": "18 pages, 10 figures",
+    "journal-ref": "Autonomous Systems Journal, Vol 5, 2023",
+    "doi": "10.1109/ASJ.2023.0002",
+    "report-no": "AS-PR-2023-02",
+    "categories": "cs.AI",
+    "license": null,
+    "abstract": "We present a deep reinforcement learning framework for autonomous systems...",
+    "versions": [
+      {
+        "version": "v1",
+        "created": "2023-02-25"
+      },
+      {
+        "version": "v2",
+        "created": "2023-03-10"
+      }
+    ],
+    "update_date": "2023-03-10",
+    "authors_parsed": [
+      [
+        "Brown",
+        "C."
+      ],
+      [
+        "Williams",
+        "D."
+      ]
+    ]
+  },
+  {
+    "id": "0003",
+    "submitter": "Alice Johnson",
+    "authors": "E. Davis, F. Wilson",
+    "title": "Natural Language Processing for Sentiment Analysis",
+    "comments": "12 pages, 5 figures",
+    "journal-ref": "Language Processing Journal, Vol 8, 2023",
+    "doi": "10.1109/LPJ.2023.0003",
+    "report-no": "LP-PR-2023-03",
+    "categories": "cs.CL",
+    "license": null,
+    "abstract": "This paper explores natural language processing techniques for sentiment analysis...",
+    "versions": [
+      {
+        "version": "v1",
+        "created": "2023-03-05"
+      },
+      {
+        "version": "v2",
+        "created": "2023-03-20"
+      }
+    ],
+    "update_date": "2023-03-20",
+    "authors_parsed": [
+      [
+        "Davis",
+        "E."
+      ],
+      [
+        "Wilson",
+        "F."
+      ]
+    ]
+  }
+]

@@ -7,6 +7,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset
+from torchtext.legacy.data import BucketIterator
+
 
 # define fields
 TEXT = Field(sequential=True, tokenize='spacy', lower=True)
