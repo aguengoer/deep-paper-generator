@@ -1,4 +1,5 @@
 import json
+import pickle
 import random
 import torch
 import torchtext
@@ -124,6 +125,12 @@ def main():
     # Build the vocabulary for the fields
     SRC.build_vocab(train_dataset, min_freq=2)
     TRG.build_vocab(train_dataset, min_freq=2)
+
+    # Save the vocabularies
+    with open("src_vocab.pkl", "wb") as f:
+        pickle.dump(SRC.vocab, f)
+    with open("trg_vocab.pkl", "wb") as f:
+        pickle.dump(TRG.vocab, f)
 
     # Define the batch size and device to use
     BATCH_SIZE = 32

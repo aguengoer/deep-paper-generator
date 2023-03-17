@@ -1,20 +1,29 @@
+import pickle
+
 import torch
 from torchtext.data.utils import get_tokenizer
 from Transformer_test_2 import TransformerModel, SRC, TRG
-
-D_MODEL = 512
-NUM_LAYERS = 3
-NUM_HEADS = 8
-HIDDEN_DIM = 2048
-DROPOUT = 0.1
-input_dim = len(SRC.vocab)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def load_model(path):
-    model = TransformerModel(D_MODEL, NUM_LAYERS, NUM_HEADS, HIDDEN_DIM, DROPOUT, input_dim).to(device)
-    model.load_state_dict(torch.load(path))
+    with open("src_vocab.pkl", "rb") as src_vocab_file:
+        SRC.vocab = pickle.load(src_vocab_file)
+
+    with open("trg_vocab.pkl", "rb") as trg_vocab_file:
+        TRG.vocab = pickle.load(trg_vocab_file)
+
+    model = TransformerModel(
+        input_dim=len(SRC.vocab),
+        output_dim=len(TRG.vocab),
+        d_model=256,
+        num_layers=3,
+        num_heads=8,
+        hidden_dim=512,
+        dropout=0.1
+    ).to(device)
+    model.load_state_dict(torch.load(path, map_location=device))
     return model
 
 
