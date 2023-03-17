@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.optim as optim
 from torchtext.legacy.data import Field, Iterator
 from torch.utils.data import Dataset
-from sklearn.model_selection import train_test_split
 
 import spacy
 import numpy as np
@@ -95,11 +94,12 @@ test_dataset = ArxivDataset(test_data, SRC, TRG)
 
 # Create iterators for the datasets
 train_iterator = Iterator(train_dataset, batch_size=BATCH_SIZE, device=device, sort=False, sort_within_batch=True,
-                          repeat=False)
+                          sort_key=lambda x: len(x.src_text))
+
 valid_iterator = Iterator(valid_dataset, batch_size=BATCH_SIZE, device=device, sort=False, sort_within_batch=True,
-                          repeat=False)
+                          sort_key=lambda x: len(x.src_text))
 test_iterator = Iterator(test_dataset, batch_size=BATCH_SIZE, device=device, sort=False, sort_within_batch=True,
-                         repeat=False)
+                         sort_key=lambda x: len(x.src_text))
 
 
 # Transformer model
