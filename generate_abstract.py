@@ -8,27 +8,20 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def load_model(path):
+    # Load the saved model
+    mod = torch.load(path, map_location=device)
+    mod.eval()
+    return mod
+
+
+def generate_abstract(model, tokenizer, title, max_len=150):
+    model.eval()
+
     with open("src_vocab.pkl", "rb") as src_vocab_file:
         SRC.vocab = pickle.load(src_vocab_file)
 
     with open("trg_vocab.pkl", "rb") as trg_vocab_file:
         TRG.vocab = pickle.load(trg_vocab_file)
-
-    model = TransformerModel(
-        input_dim=len(SRC.vocab),
-        output_dim=len(TRG.vocab),
-        d_model=256,
-        num_layers=3,
-        num_heads=8,
-        hidden_dim=512,
-        dropout=0.1
-    ).to(device)
-    model.load_state_dict(torch.load(path, map_location=device))
-    return model
-
-
-def generate_abstract(model, tokenizer, title, max_len=150):
-    model.eval()
 
     tokens = [SRC.vocab.stoi[token] for token in tokenizer(title)]
     tokens = [SRC.vocab.stoi[SRC.init_token]] + tokens + [SRC.vocab.stoi[SRC.eos_token]]
@@ -44,7 +37,7 @@ def generate_abstract(model, tokenizer, title, max_len=150):
 
         trg = torch.cat((trg, torch.LongTensor([next_token]).unsqueeze(1).to(device)), dim=0)
 
-    abstract = ' '.join([TRG.vocab.itos[t] for t in trg.squeeze(1).tolist()])
+    abstract = ' '.join([TRG.vocab.itos[t] for t in trg.squeeze(1).tolist() if t != TRG.vocab.stoi[TRG.init_token]])
 
     return abstract
 

@@ -5,9 +5,18 @@ import torch
 import torchtext
 import spacy
 
+# Load Spacy model
+spacy_en = spacy.load('en_core_web_sm')
+
+
+# Tokenization function
+def tokenize_en(text):
+    return [tok.text for tok in spacy_en.tokenizer(text)]
+
+
 # Define the fields to be used for preprocessing
-SRC = torchtext.legacy.data.Field(tokenize='spacy', init_token='<sos>', eos_token='<eos>', lower=True)
-TRG = torchtext.legacy.data.Field(tokenize='spacy', init_token='<sos>', eos_token='<eos>', lower=True)
+SRC = torchtext.legacy.data.Field(tokenize=tokenize_en, init_token='<sos>', eos_token='<eos>', lower=True)
+TRG = torchtext.legacy.data.Field(tokenize=tokenize_en, init_token='<sos>', eos_token='<eos>', lower=True)
 
 
 # Load the data from a JSON file
@@ -31,19 +40,22 @@ class ArxivDataset(torchtext.legacy.data.Dataset):
 
 # Create the Transformer model
 class TransformerModel(torch.nn.Module):
-    def __init__(self, d_model, num_layers, num_heads, hidden_dim, dropout, input_dim):
+    def __init__(self, d_model, num_layers, num_heads, hidden_dim, dropout, src_input_dim, trg_input_dim):
         super().__init__()
 
-        self.embedding = torch.nn.Embedding(input_dim, d_model)
-        self.transformer = torch.nn.Transformer(d_model, num_heads, num_layers, dim_feedforward=hidden_dim, dropout=dropout)
-        self.fc = torch.nn.Linear(d_model, input_dim)
+        # self.embedding = torch.nn.Embedding(input_dim, d_model)
+        self.src_embedding = torch.nn.Embedding(src_input_dim, d_model)
+        self.trg_embedding = torch.nn.Embedding(trg_input_dim, d_model)
+        self.transformer = torch.nn.Transformer(d_model, num_heads, num_layers, dim_feedforward=hidden_dim,
+                                                dropout=dropout)
+        self.fc = torch.nn.Linear(d_model, trg_input_dim)
 
     def forward(self, src, trg):
         # src shape: (src_len, batch_size)
         # trg shape: (trg_len, batch_size)
 
-        src = self.embedding(src)
-        trg = self.embedding(trg)
+        src = self.src_embedding(src)
+        trg = self.trg_embedding(trg)
 
         # Pass the inputs through the transformer model
         output = self.transformer(src, trg)
@@ -52,6 +64,7 @@ class TransformerModel(torch.nn.Module):
         output = self.fc(output)
 
         return output
+
 
 # Define the training function
 def train(model, iterator, optimizer, criterion, clip):
@@ -149,15 +162,17 @@ def main():
     DROPOUT = 0.1
 
     # Create the model
-    input_dim = len(SRC.vocab)
-    model = TransformerModel(D_MODEL, NUM_LAYERS, NUM_HEADS, HIDDEN_DIM, DROPOUT, input_dim).to(device)
+    src_input_dim = len(SRC.vocab)
+    trg_input_dim = len(TRG.vocab)
+    model = TransformerModel(D_MODEL, NUM_LAYERS, NUM_HEADS, HIDDEN_DIM, DROPOUT, src_input_dim, trg_input_dim).to(
+        device)
 
     # Define the loss function and optimizer
     criterion = torch.nn.CrossEntropyLoss(ignore_index=TRG.vocab.stoi['<pad>'])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
     # Train the model
-    N_EPOCHS = 10
+    N_EPOCHS = 15
     CLIP = 1
 
     for epoch in range(N_EPOCHS):
@@ -167,7 +182,7 @@ def main():
         print(f'Epoch: {epoch + 1:02} | Train Loss: {train_loss:.3f} | Val. Loss: {valid_loss:.3f}')
 
     # Save the model
-    torch.save(model.state_dict(), 'transformer_model.pt')
+    torch.save(model, 'transformer_model.pt')
 
 
 if __name__ == '__main__':
