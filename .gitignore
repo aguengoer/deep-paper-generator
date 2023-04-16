@@ -259,3 +259,8 @@ poetry.toml
 .ruff_cache/
 
 # End of https://www.toptal.com/developers/gitignore/api/python,pycharm+all
+
+src_field.pth
+trg_field.pth
+test_data.json
+transformer_model.pt
