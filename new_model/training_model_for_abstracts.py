@@ -19,20 +19,19 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 class TransformerModel(nn.Module):
-    def __init__(self, vocab_size, ninp, nhead, nhid, nlayers, dropout=0.5):
+    def __init__(self, ntoken, ninp, nhead, nhid, nlayers, dropout=0.5):
         super(TransformerModel, self).__init__()
 
-        self.embeddings = nn.Embedding(vocab_size, ninp)
+        self.embeddings = nn.Embedding(ntoken, ninp)
         self.src_mask = None
         self.pos_encoder = PositionalEncoding(ninp, dropout)
-
-        self.model_type = 'Transformer'
-        encoder_layers = TransformerEncoderLayer(ninp, nhead, nhid, dropout)
-        self.transformer_encoder = TransformerEncoder(encoder_layers, nlayers)
-        self.encoder = nn.Embedding(ntoken, ninp)
-        self.ninp = ninp
-        self.decoder = nn.Linear(ninp, ntoken)
-
+        self.transformer_encoder = nn.TransformerEncoder(
+            nn.TransformerEncoderLayer(ninp, nhead, nhid, dropout), nlayers
+        )
+        self.transformer_decoder = nn.TransformerDecoder(
+            nn.TransformerDecoderLayer(ninp, nhead, nhid, dropout), nlayers
+        )
+        self.fc_out = nn.Linear(ninp, ntoken)
         self.init_weights()
 
     def _generate_square_subsequent_mask(self, sz):
@@ -269,6 +268,7 @@ def evaluate(model, iterator, criterion):
     return total_loss / len(iterator)
 
 
+embed_size = 512
 ntokens = len(vocab)
 emsize = 200
 nhid = 200
@@ -276,7 +276,11 @@ nlayers = 2
 nhead = 2
 dropout = 0.2
 
-model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device)
+vocab_size = len(vocab)  # Add this line
+ntoken = vocab_size
+ninp = embed_size
+
+model = TransformerModel(ntoken, ninp, nhead, nhid, nlayers, dropout).to(device)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=5e-4)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min')
