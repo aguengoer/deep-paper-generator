@@ -43,17 +43,21 @@ class TransformerModel(nn.Module):
         self.decoder.bias.data.zero_()
         self.decoder.weight.data.uniform_(-initrange, initrange)
 
-    def forward(self, src, titles_data, categories_data, authors_data, abstracts_lengths, src_mask=None):
-        if src_mask is None or src_mask.size(0) != len(src):
-            device = src.device
-            mask = self._generate_square_subsequent_mask(len(src)).to(device)
-            self.src_mask = mask
+    def forward(self, titles_data, categories_data, authors_data, abstracts_lengths):
+        src = self.encode_src(titles_data, categories_data, authors_data)
+        src = src.transpose(0, 1)
 
-        src = self.encoder(src) * math.sqrt(self.ninp)
-        src = self.pos_encoder(src)
-        output = self.transformer_encoder(src, self.src_mask)
-        output = self.decoder(output)
-        return output, abstracts_lengths
+        abstracts_max_length = abstracts_lengths.max()
+        tgt = torch.arange(0, abstracts_max_length).unsqueeze(0).expand(titles_data.size(0), -1).to(self.device)
+        tgt = tgt.transpose(0, 1)
+
+        src_mask = None
+        tgt_mask = self.transformer.generate_square_subsequent_mask(tgt.size(0)).to(self.device)
+
+        output = self.transformer(src, tgt, src_mask=src_mask, tgt_mask=tgt_mask)
+        output = self.decode_abstract(output)
+
+        return output.transpose(0, 1)
 
 
 class PositionalEncoding(nn.Module):
