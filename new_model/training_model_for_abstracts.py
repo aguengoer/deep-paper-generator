@@ -43,6 +43,14 @@ class TransformerModel(nn.Module):
         self.decoder.bias.data.zero_()
         self.decoder.weight.data.uniform_(-initrange, initrange)
 
+    def encode_src(self, titles_data, categories_data, authors_data):
+        titles_embedded = self.titles_encoder(titles_data)
+        categories_embedded = self.categories_encoder(categories_data)
+        authors_embedded = self.authors_encoder(authors_data)
+
+        src = torch.cat((titles_embedded, categories_embedded, authors_embedded), dim=-1)
+        return src
+
     def forward(self, titles_data, categories_data, authors_data, abstracts_lengths):
         src = self.encode_src(titles_data, categories_data, authors_data)
         src = src.transpose(0, 1)
