@@ -3,6 +3,7 @@ import math
 import os
 import random
 import urllib
+from torch.nn import TransformerEncoder, TransformerEncoderLayer
 
 import torch
 import torch.nn as nn
@@ -18,12 +19,14 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 class TransformerModel(nn.Module):
-    def __init__(self, ntoken, ninp, nhead, nhid, nlayers, dropout=0.5):
+    def __init__(self, vocab_size, ninp, nhead, nhid, nlayers, dropout=0.5):
         super(TransformerModel, self).__init__()
-        from torch.nn import TransformerEncoder, TransformerEncoderLayer
-        self.model_type = 'Transformer'
+
+        self.embeddings = nn.Embedding(vocab_size, ninp)
         self.src_mask = None
         self.pos_encoder = PositionalEncoding(ninp, dropout)
+
+        self.model_type = 'Transformer'
         encoder_layers = TransformerEncoderLayer(ninp, nhead, nhid, dropout)
         self.transformer_encoder = TransformerEncoder(encoder_layers, nlayers)
         self.encoder = nn.Embedding(ntoken, ninp)
@@ -44,9 +47,9 @@ class TransformerModel(nn.Module):
         self.decoder.weight.data.uniform_(-initrange, initrange)
 
     def encode_src(self, titles_data, categories_data, authors_data):
-        titles_embedded = self.titles_encoder(titles_data)
-        categories_embedded = self.categories_encoder(categories_data)
-        authors_embedded = self.authors_encoder(authors_data)
+        titles_embedded = self.embeddings(titles_data)
+        categories_embedded = self.embeddings(categories_data)
+        authors_embedded = self.embeddings(authors_data)
 
         src = torch.cat((titles_embedded, categories_embedded, authors_embedded), dim=-1)
         return src
