@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="51e9da9a-7f87-4247-9024-7dac653b0ab3" name="Changes" comment=".">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="51e9da9a-7f87-4247-9024-7dac653b0ab3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/new_model/training_model_for_abstracts.py" beforeDir="false" afterPath="$PROJECT_DIR$/new_model/training_model_for_abstracts.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -182,7 +181,7 @@
       <workItem from="1675033203293" duration="1327000" />
       <workItem from="1680012077341" duration="6110000" />
       <workItem from="1681652647236" duration="5307000" />
-      <workItem from="1681731677959" duration="8297000" />
+      <workItem from="1681731677959" duration="8598000" />
     </task>
     <task id="LOCAL-00001" summary=".">
       <created>1675033913401</created>
@@ -212,7 +211,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681744601904</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary=".">
+      <created>1681765680351</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1681765680351</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

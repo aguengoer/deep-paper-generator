@@ -8,6 +8,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torchtext
+from torch.nn.utils.rnn import pack_padded_sequence
 from torchtext.data.utils import get_tokenizer
 from torchtext.vocab import build_vocab_from_iterator
 from torch.utils.data import DataLoader
@@ -42,7 +43,7 @@ class TransformerModel(nn.Module):
         self.decoder.bias.data.zero_()
         self.decoder.weight.data.uniform_(-initrange, initrange)
 
-    def forward(self, src, src_mask=None, tgt_mask=None):
+    def forward(self, src, titles_data, categories_data, authors_data, abstracts_lengths, src_mask=None):
         if src_mask is None or src_mask.size(0) != len(src):
             device = src.device
             mask = self._generate_square_subsequent_mask(len(src)).to(device)
@@ -52,7 +53,7 @@ class TransformerModel(nn.Module):
         src = self.pos_encoder(src)
         output = self.transformer_encoder(src, self.src_mask)
         output = self.decoder(output)
-        return output
+        return output, abstracts_lengths
 
 
 class PositionalEncoding(nn.Module):
@@ -153,7 +154,7 @@ def collate_batch(batch):
     # Pad abstracts
     max_abstract_length = max(len(vocab.lookup_indices(example.abstract)) for example in batch)
     padded_abstracts = []
-    abstracts_lengths = []  # Add this line
+    abstracts_lengths = [len(abstract_indices) for abstract_indices in padded_abstracts]
     for example in batch:
         abstract_indices = vocab.lookup_indices(example.abstract)
         abstracts_lengths.append(len(abstract_indices))  # Add this line
@@ -219,20 +220,18 @@ def train(model, iterator, criterion, optimizer):
     epoch_loss = 0
 
     for batch in iterator:
-        titles_data, categories_data, authors_data, abstracts_data, abstracts_lengths = batch
-
         optimizer.zero_grad()
 
-        # Here, use the data and targets as required by your model.
-        # For example, you can use titles_data and categories_data as input data
-        # and abstracts_data as targets, depending on your model's architecture.
+        titles_data, categories_data, authors_data, abstracts_data, abstracts_lengths = batch
 
-        # predictions = model(data)
-        predictions = model(titles_data, categories_data)  # Update this line with your model's input
+        predictions, abstracts_lengths = model(titles_data, categories_data, authors_data, abstracts_lengths)
 
-        # loss = criterion(predictions, targets)
-        loss = criterion(predictions.transpose(1, 2), abstracts_data)
+        packed_abstracts_data = pack_padded_sequence(abstracts_data, abstracts_lengths, batch_first=True,
+                                                     enforce_sorted=False)
+        packed_predictions = pack_padded_sequence(predictions, abstracts_lengths, batch_first=True,
+                                                  enforce_sorted=False)
 
+        loss = criterion(packed_predictions.data, packed_abstracts_data.data)
         loss.backward()
 
         optimizer.step()
