@@ -150,10 +150,13 @@ def collate_batch(batch):
     titles_data = torch.tensor(padded_titles, dtype=torch.long)
 
     # Pad abstracts
+    # Pad abstracts
     max_abstract_length = max(len(vocab.lookup_indices(example.abstract)) for example in batch)
     padded_abstracts = []
+    abstracts_lengths = []  # Add this line
     for example in batch:
         abstract_indices = vocab.lookup_indices(example.abstract)
+        abstracts_lengths.append(len(abstract_indices))  # Add this line
         padded_abstract = abstract_indices + [vocab['<pad>']] * (max_abstract_length - len(abstract_indices))
         padded_abstracts.append(padded_abstract)
     abstracts_data = torch.tensor(padded_abstracts, dtype=torch.long)
@@ -178,7 +181,7 @@ def collate_batch(batch):
     # Process authors
     authors_data = [example.authors for example in batch]
 
-    return titles_data, categories_data, authors_data, abstracts_data
+    return titles_data, categories_data, authors_data, abstracts_data, abstracts_lengths  # Add abstracts_lengths here
 
 
 def read_and_split_data(file_path, train_ratio=0.8, valid_ratio=0.1):
@@ -216,7 +219,7 @@ def train(model, iterator, criterion, optimizer):
     epoch_loss = 0
 
     for batch in iterator:
-        titles_data, categories_data, authors_data, abstracts_data = batch  # Unpack the batch correctly
+        titles_data, categories_data, authors_data, abstracts_data, abstracts_lengths = batch
 
         optimizer.zero_grad()
 
@@ -228,7 +231,7 @@ def train(model, iterator, criterion, optimizer):
         predictions = model(titles_data, categories_data)  # Update this line with your model's input
 
         # loss = criterion(predictions, targets)
-        loss = criterion(predictions, abstracts_data)  # Update this line with your model's target
+        loss = criterion(predictions.transpose(1, 2), abstracts_data)
 
         loss.backward()
 
