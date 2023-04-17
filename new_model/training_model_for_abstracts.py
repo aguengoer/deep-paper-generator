@@ -1,3 +1,4 @@
+import itertools
 import json
 import math
 import os
@@ -19,20 +20,21 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 class TransformerModel(nn.Module):
-    def __init__(self, ntoken, ninp, nhead, nhid, nlayers, dropout=0.5):
+    def __init__(self, num_embeddings, embedding_dim, hidden_dim, num_layers, dropout):
         super(TransformerModel, self).__init__()
 
-        self.embeddings = nn.Embedding(ntoken, ninp)
-        self.src_mask = None
-        self.pos_encoder = PositionalEncoding(ninp, dropout)
-        self.transformer_encoder = nn.TransformerEncoder(
-            nn.TransformerEncoderLayer(ninp, nhead, nhid, dropout), nlayers
-        )
-        self.transformer_decoder = nn.TransformerDecoder(
-            nn.TransformerDecoderLayer(ninp, nhead, nhid, dropout), nlayers
-        )
-        self.fc_out = nn.Linear(ninp, ntoken)
-        self.init_weights()
+        self.embedding_dim = embedding_dim
+        self.hidden_dim = hidden_dim
+        self.num_layers = num_layers
+
+        self.embeddings_titles = nn.Embedding(num_embeddings, embedding_dim)
+        self.embeddings_authors = nn.Embedding(num_authors, embedding_dim)
+        self.embeddings_categories = nn.Embedding(num_categories, embedding_dim)
+
+        self.encoder = nn.GRU(embedding_dim, hidden_dim, num_layers, batch_first=True, dropout=dropout)
+        self.decoder = nn.GRU(embedding_dim, hidden_dim, num_layers, batch_first=True, dropout=dropout)
+
+        self.fc = nn.Linear(hidden_dim, num_embeddings)
 
     def _generate_square_subsequent_mask(self, sz):
         mask = (torch.triu(torch.ones(sz, sz)) == 1).transpose(0, 1)
@@ -41,20 +43,18 @@ class TransformerModel(nn.Module):
 
     def init_weights(self):
         initrange = 0.1
-        self.title_embedding.weight.data.uniform_(-initrange, initrange)
-        self.category_embedding.weight.data.uniform_(-initrange, initrange)
-        self.author_embedding.weight.data.uniform_(-initrange, initrange)
-        self.pos_encoder.weight.data.uniform_(-initrange, initrange)
-        self.decoder.bias.data.zero_()
-        self.decoder.weight.data.uniform_(-initrange, initrange)
+        self.embeddings.weight.data.uniform_(-initrange, initrange)
+        self.fc_out.bias.data.zero_()
+        self.fc_out.weight.data.uniform_(-initrange, initrange)
 
     def encode_src(self, titles_data, categories_data, authors_data):
-        titles_embedded = self.embeddings(titles_data)
-        categories_embedded = self.embeddings(categories_data)
-        authors_embedded = self.embeddings(authors_data)
+        titles_embedded = self.embeddings_titles(titles_data)
+        categories_embedded = self.embeddings_categories(categories_data)
+        authors_embedded = self.embeddings_authors(authors_data)
 
-        src = torch.cat((titles_embedded, categories_embedded, authors_embedded), dim=-1)
-        return src
+        src_embedded = torch.cat((titles_embedded, categories_embedded, authors_embedded), dim=1)
+
+        return src_embedded
 
     def forward(self, titles_data, categories_data, authors_data, abstracts_lengths):
         src = self.encode_src(titles_data, categories_data, authors_data)
@@ -283,7 +283,18 @@ vocab_size = len(vocab)  # Add this line
 ntoken = vocab_size
 ninp = embed_size
 
-model = TransformerModel(ntoken, ninp, nhead, nhid, nlayers, dropout).to(device)
+
+embedding_dim = 256  # This is the size of the embedding vector for each token (you can adjust this as needed)
+hidden_dim = 512     # This is the size of the hidden state in your RNN (you can adjust this as needed)
+num_layers = 2       # This is the number of stacked layers in your RNN (you can adjust this as needed)
+
+
+num_authors = len(set(itertools.chain.from_iterable(train_data['authors'])))
+num_categories = len(set(itertools.chain.from_iterable(train_data['categories'])))
+num_embeddings = len(vocab)
+
+
+model = TransformerModel(num_embeddings, embedding_dim, hidden_dim, num_layers, dropout)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=5e-4)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min')
