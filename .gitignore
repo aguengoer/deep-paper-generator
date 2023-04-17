@@ -262,5 +262,4 @@ poetry.toml
 
 src_field.pth
 trg_field.pth
-test_data.json
 transformer_model.pt
