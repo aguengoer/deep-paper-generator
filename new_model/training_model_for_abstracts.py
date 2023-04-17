@@ -283,16 +283,27 @@ vocab_size = len(vocab)  # Add this line
 ntoken = vocab_size
 ninp = embed_size
 
+# Count the number of unique authors
+unique_authors = set()
+for data in train_data:
+    for author in data['authors']:
+        unique_authors.add(author)
+num_authors = len(unique_authors)
+
+# Count the number of unique categories
+unique_categories = set()
+for data in train_data:
+    for category in data['categories']:
+        unique_categories.add(category)
+num_categories = len(unique_categories)
 
 embedding_dim = 256  # This is the size of the embedding vector for each token (you can adjust this as needed)
-hidden_dim = 512     # This is the size of the hidden state in your RNN (you can adjust this as needed)
-num_layers = 2       # This is the number of stacked layers in your RNN (you can adjust this as needed)
-
+hidden_dim = 512  # This is the size of the hidden state in your RNN (you can adjust this as needed)
+num_layers = 2  # This is the number of stacked layers in your RNN (you can adjust this as needed)
 
 num_authors = len(set(itertools.chain.from_iterable(train_data['authors'])))
 num_categories = len(set(itertools.chain.from_iterable(train_data['categories'])))
 num_embeddings = len(vocab)
-
 
 model = TransformerModel(num_embeddings, embedding_dim, hidden_dim, num_layers, dropout)
 criterion = nn.CrossEntropyLoss()
