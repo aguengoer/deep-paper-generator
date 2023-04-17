@@ -41,7 +41,10 @@ class TransformerModel(nn.Module):
 
     def init_weights(self):
         initrange = 0.1
-        self.encoder.weight.data.uniform_(-initrange, initrange)
+        self.title_embedding.weight.data.uniform_(-initrange, initrange)
+        self.category_embedding.weight.data.uniform_(-initrange, initrange)
+        self.author_embedding.weight.data.uniform_(-initrange, initrange)
+        self.pos_encoder.weight.data.uniform_(-initrange, initrange)
         self.decoder.bias.data.zero_()
         self.decoder.weight.data.uniform_(-initrange, initrange)
 
