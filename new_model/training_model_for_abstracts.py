@@ -1,76 +1,13 @@
-import itertools
 import json
 import math
-import os
-import random
-import urllib
-from torch.nn import TransformerEncoder, TransformerEncoderLayer
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torchtext
-from torch.nn.utils.rnn import pack_padded_sequence
+from torch.utils.data import Dataset, DataLoader, random_split
 from torchtext.data.utils import get_tokenizer
 from torchtext.vocab import build_vocab_from_iterator
-from torch.utils.data import DataLoader
-from torchtext.legacy import data
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-
-class TransformerModel(nn.Module):
-    def __init__(self, num_embeddings, embedding_dim, hidden_dim, num_layers, dropout):
-        super(TransformerModel, self).__init__()
-
-        self.embedding_dim = embedding_dim
-        self.hidden_dim = hidden_dim
-        self.num_layers = num_layers
-
-        self.embeddings_titles = nn.Embedding(num_embeddings, embedding_dim)
-        self.embeddings_authors = nn.Embedding(num_authors, embedding_dim)
-        self.embeddings_categories = nn.Embedding(num_categories, embedding_dim)
-
-        self.encoder = nn.GRU(embedding_dim, hidden_dim, num_layers, batch_first=True, dropout=dropout)
-        self.decoder = nn.GRU(embedding_dim, hidden_dim, num_layers, batch_first=True, dropout=dropout)
-
-        self.fc = nn.Linear(hidden_dim, num_embeddings)
-
-    def _generate_square_subsequent_mask(self, sz):
-        mask = (torch.triu(torch.ones(sz, sz)) == 1).transpose(0, 1)
-        mask = mask.float().masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, float(0.0))
-        return mask
-
-    def init_weights(self):
-        initrange = 0.1
-        self.embeddings.weight.data.uniform_(-initrange, initrange)
-        self.fc_out.bias.data.zero_()
-        self.fc_out.weight.data.uniform_(-initrange, initrange)
-
-    def encode_src(self, titles_data, categories_data, authors_data):
-        titles_embedded = self.embeddings_titles(titles_data)
-        categories_embedded = self.embeddings_categories(categories_data)
-        authors_embedded = self.embeddings_authors(authors_data)
-
-        src_embedded = torch.cat((titles_embedded, categories_embedded, authors_embedded), dim=1)
-
-        return src_embedded
-
-    def forward(self, titles_data, categories_data, authors_data, abstracts_lengths):
-        src = self.encode_src(titles_data, categories_data, authors_data)
-        src = src.transpose(0, 1)
-
-        abstracts_max_length = abstracts_lengths.max()
-        tgt = torch.arange(0, abstracts_max_length).unsqueeze(0).expand(titles_data.size(0), -1).to(self.device)
-        tgt = tgt.transpose(0, 1)
-
-        src_mask = None
-        tgt_mask = self.transformer.generate_square_subsequent_mask(tgt.size(0)).to(self.device)
-
-        output = self.transformer(src, tgt, src_mask=src_mask, tgt_mask=tgt_mask)
-        output = self.decode_abstract(output)
-
-        return output.transpose(0, 1)
 
 
 class PositionalEncoding(nn.Module):
@@ -91,237 +28,175 @@ class PositionalEncoding(nn.Module):
         return self.dropout(x)
 
 
-# (TransformerModel and PositionalEncoding code remains the same as the previous code block.)
+class TransformerModel(nn.Module):
+    def __init__(self, ntoken, ninp, nhead, nhid, nlayers, dropout=0.5):
+        super(TransformerModel, self).__init__()
+        self.model_type = 'Transformer'
+        self.pos_encoder = PositionalEncoding(ninp, dropout)
+        encoder_layers = nn.TransformerEncoderLayer(ninp, nhead, nhid, dropout)
+        self.transformer_encoder = nn.TransformerEncoder(encoder_layers, nlayers)
+        decoder_layers = nn.TransformerDecoderLayer(ninp, nhead, nhid, dropout)
+        self.transformer_decoder = nn.TransformerDecoder(decoder_layers, nlayers)
+        self.encoder = nn.Embedding(ntoken, ninp)
+        self.decoder = nn.Linear(ninp, ntoken)
 
-# (Keep your existing ArxivDataset code.)
-class ArxivDataset(torchtext.legacy.data.Dataset):
-    def __init__(self, examples, fields):
-        super().__init__(examples, fields)
+        self.init_weights()
 
-    @classmethod
-    def from_raw_data(cls, raw_data, src_field, trg_field):
-        fields = [('title', src_field), ('categories', src_field), ('authors', src_field), ('abstract', trg_field)]
-        examples = [torchtext.legacy.data.Example.fromlist(
-            [item['title'], item['categories'], item['authors'], item['abstract']], fields) for item in raw_data]
-        return cls(examples, fields)
+    def generate_square_subsequent_mask(self, sz):
+        mask = (torch.triu(torch.ones(sz, sz)) == 1).transpose(0, 1)
+        mask = mask.float().masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, float(0.0))
+        return mask
 
-    @classmethod
-    def splits(cls, tokenizer, train_raw_data, valid_raw_data=None, test_raw_data=None):
-        src_field = data.Field(sequential=True, tokenize=tokenizer, lower=True, batch_first=True)
-        trg_field = data.Field(sequential=True, tokenize=tokenizer, lower=True, batch_first=True)
+    def init_weights(self):
+        initrange = 0.1
+        self.encoder.weight.data.uniform_(-initrange, initrange)
+        self.decoder.bias.data.zero_()
+        self.decoder.weight.data.uniform_(-initrange, initrange)
 
-        train_data = cls.from_raw_data(train_raw_data, src_field, trg_field)
-
-        if valid_raw_data:
-            valid_data = cls.from_raw_data(valid_raw_data, src_field, trg_field)
-        else:
-            valid_data = None
-
-        if test_raw_data:
-            test_data = cls.from_raw_data(test_raw_data, src_field, trg_field)
-        else:
-            test_data = None
-
-        return train_data, valid_data, test_data
-
-    def shuffle(self, seed=None):
-        if seed is not None:
-            random.seed(seed)
-        random.shuffle(self.examples)
+    def forward(self, src, tgt):
+        src = self.encoder(src) * math.sqrt(src.size(-1))
+        src = self.pos_encoder(src)
+        tgt = self.encoder(tgt) * math.sqrt(tgt.size(-1))
+        tgt = self.pos_encoder(tgt)
+        memory = self.transformer_encoder(src)
+        tgt_mask = self.generate_square_subsequent_mask(len(tgt)).to(device)
+        out = self.transformer_decoder(tgt, memory, tgt_mask=tgt_mask)
+        return self.decoder(out)
 
 
-def yield_tokens(data_iter):
-    for example in data_iter:
-        yield tokenizer(" ".join(example.title))
-        yield tokenizer(" ".join(example.categories))
-        yield tokenizer(" ".join(example.authors))
-        yield tokenizer(" ".join(example.abstract))
+class PaperDataset(Dataset):
+    def __init__(self, data_path, vocab):
+        with open(data_path, 'r') as f:
+            self.data = json.load(f)
+        self.vocab = vocab
+        self.tokenizer = get_tokenizer('spacy', language='en_core_web_sm')
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        title = self.data[idx]['title']
+        authors = self.data[idx]['authors']
+        categories = self.data[idx]['categories']
+        abstract = self.data[idx]['abstract']
+
+        input_str = f"{title} {authors} {categories}"
+        input_tensor = torch.tensor([self.vocab[token] for token in self.tokenizer(input_str)], dtype=torch.long)
+        target_tensor = torch.tensor([self.vocab[token] for token in self.tokenizer(abstract)], dtype=torch.long)
+
+        return input_tensor, target_tensor
 
 
-def collate_batch(batch):
-    # Download and load the JSON data
-    url = 'https://raw.githubusercontent.com/aguengoer/deep-paper-generator/main/test_data.json'
-    response = urllib.request.urlopen(url)
-    data = json.loads(response.read())
+def pad_sequence(batch):
+    inputs, targets = zip(*batch)
+    inputs_len = [len(inp) for inp in inputs]
+    targets_len = [len(tgt) for tgt in targets]
 
-    # Extract unique categories
-    unique_categories = set()
-    for item in data:
-        if isinstance(item['categories'], list):
-            unique_categories.update(item['categories'])
-        else:
-            unique_categories.add(item['categories'])
+    max_inputs_len = max(inputs_len)
+    max_targets_len = max(targets_len)
 
-    category_to_index = {category: index for index, category in enumerate(sorted(unique_categories))}
-    category_to_index['math'] = len(category_to_index)
-    category_to_index['cond'] = len(category_to_index) + 1
-    category_to_index['astro'] = len(category_to_index) + 2
-    category_to_index['hep'] = len(category_to_index) + 3
+    inputs_padded = torch.zeros(len(inputs), max_inputs_len, dtype=torch.long)
+    targets_padded = torch.zeros(len(targets), max_targets_len, dtype=torch.long)
 
-    # Pad titles
-    max_title_length = max(len(vocab.lookup_indices(example.title)) for example in batch)
-    padded_titles = []
-    for example in batch:
-        title_indices = vocab.lookup_indices(example.title)
-        padded_title = title_indices + [vocab['<pad>']] * (max_title_length - len(title_indices))
-        padded_titles.append(padded_title)
-    titles_data = torch.tensor(padded_titles, dtype=torch.long)
+    for i, inp in enumerate(inputs):
+        inputs_padded[i, :inputs_len[i]] = inp
+    for i, tgt in enumerate(targets):
+        targets_padded[i, :targets_len[i]] = tgt
 
-    # Pad abstracts
-    # Pad abstracts
-    max_abstract_length = max(len(vocab.lookup_indices(example.abstract)) for example in batch)
-    padded_abstracts = []
-    abstracts_lengths = [len(abstract_indices) for abstract_indices in padded_abstracts]
-    for example in batch:
-        abstract_indices = vocab.lookup_indices(example.abstract)
-        abstracts_lengths.append(len(abstract_indices))  # Add this line
-        padded_abstract = abstract_indices + [vocab['<pad>']] * (max_abstract_length - len(abstract_indices))
-        padded_abstracts.append(padded_abstract)
-    abstracts_data = torch.tensor(padded_abstracts, dtype=torch.long)
-
-    # Process categories
-    categories_data = []
-    max_categories_length = max(len(example.categories) for example in batch)
-    for example in batch:
-        if isinstance(example.categories, list):
-            # Filter out categories not present in the dictionary
-            categories_indices = [category_to_index[cat] for cat in example.categories if cat in category_to_index]
-            padded_categories = categories_indices + [-1] * (max_categories_length - len(categories_indices))
-            categories_data.append(padded_categories)
-        else:
-            if example.categories in category_to_index:
-                categories_data.append([category_to_index[example.categories]] + [-1] * (max_categories_length - 1))
-            else:
-                categories_data.append([-1] * max_categories_length)
-
-    categories_data = torch.tensor(categories_data, dtype=torch.long)
-
-    # Process authors
-    authors_data = [example.authors for example in batch]
-
-    return titles_data, categories_data, authors_data, abstracts_data, abstracts_lengths  # Add abstracts_lengths here
+    return inputs_padded.t(), targets_padded.t()
 
 
-def read_and_split_data(file_path, train_ratio=0.8, valid_ratio=0.1):
-    with open(file_path, 'r') as f:
-        data = json.load(f)
+def train_transformer(transformer, dataloader, criterion, optimizer):
+    transformer.train()
+    total_loss = 0
+    for inputs, targets in dataloader:
+        inputs = inputs.to(device)
+        targets = targets.to(device)
 
-    train_size = int(train_ratio * len(data))
-    valid_size = int(valid_ratio * len(data))
-    test_size = len(data) - train_size - valid_size
-
-    train_data = data[:train_size]
-    valid_data = data[train_size:train_size + valid_size]
-    test_data = data[train_size + valid_size:]
-
-    return train_data, valid_data, test_data
-
-
-train_data, valid_data, test_data = read_and_split_data("test_data.json")
-
-tokenizer = get_tokenizer("spacy", language="en_core_web_sm")
-train_dataset, valid_dataset, test_dataset = ArxivDataset.splits(tokenizer=tokenizer, train_raw_data=train_data,
-                                                                 valid_raw_data=valid_data, test_raw_data=test_data)
-train_dataset.shuffle()
-train_dataloader = DataLoader(train_dataset, batch_size=20, collate_fn=collate_batch)
-valid_dataloader = DataLoader(valid_dataset, batch_size=20, collate_fn=collate_batch)
-test_dataloader = DataLoader(test_dataset, batch_size=20, collate_fn=collate_batch)
-
-vocab = build_vocab_from_iterator(yield_tokens(train_dataset), specials=['<unk>', '<pad>'], special_first=True)
-vocab.set_default_index(vocab['<unk>'])
-
-
-def train(model, iterator, criterion, optimizer):
-    model.train()
-
-    epoch_loss = 0
-
-    for batch in iterator:
         optimizer.zero_grad()
-
-        titles_data, categories_data, authors_data, abstracts_data, abstracts_lengths = batch
-
-        predictions, abstracts_lengths = model(titles_data, categories_data, authors_data, abstracts_lengths)
-
-        packed_abstracts_data = pack_padded_sequence(abstracts_data, abstracts_lengths, batch_first=True,
-                                                     enforce_sorted=False)
-        packed_predictions = pack_padded_sequence(predictions, abstracts_lengths, batch_first=True,
-                                                  enforce_sorted=False)
-
-        loss = criterion(packed_predictions.data, packed_abstracts_data.data)
+        output = transformer(inputs, targets[:-1])
+        loss = criterion(output.reshape(-1, len(vocab)), targets[1:].reshape(-1))
         loss.backward()
-
         optimizer.step()
 
-        epoch_loss += loss.item()
+        total_loss += loss.item()
+        print(f"training total loss = {total_loss}")
+    return total_loss / len(dataloader)
 
-    return epoch_loss / len(iterator)
 
-
-def evaluate(model, iterator, criterion):
-    model.eval()
-    total_loss = 0.
+def evaluate(transformer, dataloader, criterion):
+    transformer.eval()
+    total_loss = 0
     with torch.no_grad():
-        for batch in iterator:
-            data, targets = batch
-            output = model(data)
-            loss = criterion(output.view(-1, ntokens), targets)
+        for inputs, targets in dataloader:
+            inputs = inputs.to(device)
+            targets = targets.to(device)
+
+            output = transformer(inputs, targets[:-1])
+            loss = criterion(output.reshape(-1, len(vocab)), targets[1:].reshape(-1))
+
             total_loss += loss.item()
+            print(f"eval total loss = {total_loss}")
+    return total_loss / len(dataloader)
 
-    return total_loss / len(iterator)
+
+def yield_tokens(data_path):
+    tokenizer = get_tokenizer('spacy', language='en_core_web_sm')
+    with open(data_path, 'r') as f:
+        data = json.load(f)
+    for item in data:
+        yield tokenizer(f"{item['title']} {item['authors']} {item['categories']}")
+        yield tokenizer(item['abstract'])
 
 
-embed_size = 512
+# Build Vocabulary
+data_path = "test_data.json"
+vocab = build_vocab_from_iterator(yield_tokens(data_path), specials=['<unk>', '<pad>'], special_first=True)
+vocab.set_default_index(vocab["<unk>"])
+
+# Model Parameters
 ntokens = len(vocab)
-emsize = 200
-nhid = 200
-nlayers = 2
-nhead = 2
-dropout = 0.2
+emsize = 512
+nhid = 2048
+nlayers = 6
+nhead = 8
+dropout = 0.1
 
-vocab_size = len(vocab)  # Add this line
-ntoken = vocab_size
-ninp = embed_size
+# Training Parameters
+batch_size = 16
+num_epochs = 10
 
-# Count the number of unique authors
-unique_authors = set()
-for data in train_data:
-    for author in data['authors']:
-        unique_authors.add(author)
-num_authors = len(unique_authors)
+# Create Dataset and DataLoader
+dataset = PaperDataset(data_path, vocab)
+train_size = int(0.8 * len(dataset))
+valid_size = len(dataset) - train_size
+train_dataset, valid_dataset = random_split(dataset, [train_size, valid_size])
 
-# Count the number of unique categories
-unique_categories = set()
-for data in train_data:
-    for category in data['categories']:
-        unique_categories.add(category)
-num_categories = len(unique_categories)
+train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, collate_fn=pad_sequence)
+valid_dataloader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=True, collate_fn=pad_sequence)
 
-embedding_dim = 256  # This is the size of the embedding vector for each token (you can adjust this as needed)
-hidden_dim = 512  # This is the size of the hidden state in your RNN (you can adjust this as needed)
-num_layers = 2  # This is the number of stacked layers in your RNN (you can adjust this as needed)
+# Initialize Model, Criterion, and Optimizer
+model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device)
+criterion = nn.CrossEntropyLoss(ignore_index=vocab["<pad>"])
+optimizer = optim.Adam(model.parameters())
 
-num_authors = len(set(itertools.chain.from_iterable(train_data['authors'])))
-num_categories = len(set(itertools.chain.from_iterable(train_data['categories'])))
-num_embeddings = len(vocab)
-
-model = TransformerModel(num_embeddings, embedding_dim, hidden_dim, num_layers, dropout)
-criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=5e-4)
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min')
-
+# Training Loop
 best_val_loss = float("inf")
-epochs = 10
+best_model = None
 
-for epoch in range(1, epochs + 1):
-    train_loss = train(model, train_dataloader, criterion, optimizer)
+for epoch in range(1, num_epochs + 1):
+    print(f"training started = {num_epochs}")
+    train_loss = train_transformer(model, train_dataloader, criterion, optimizer)
+    print(f"training finished = {num_epochs}")
+
+    print(f"evaluate started = {num_epochs}")
     val_loss = evaluate(model, valid_dataloader, criterion)
-    print(f'| epoch {epoch:03d} | train loss {train_loss:.4f} | valid loss {val_loss:.4f}')
-    scheduler.step(val_loss)
+    print(f"evaluate finishing = {num_epochs}")
+    print(f"Epoch: {epoch}, Train Loss: {train_loss:.2f}, Val Loss: {val_loss:.2f}")
 
     if val_loss < best_val_loss:
         best_val_loss = val_loss
-        torch.save(model.state_dict(), 'best_model.pt')
+        best_model = model
 
-test_loss = evaluate(model, test_dataloader, criterion)
-print(f'| Test loss {test_loss:.4f}')
+# Save the best model
+torch.save(best_model.state_dict(), "best_model.pth")
