@@ -152,54 +152,65 @@ def yield_tokens(data_path):
         yield tokenizer(item['abstract'])
 
 
-# Build Vocabulary
-data_path = "test_data.json"
-vocab = build_vocab_from_iterator(yield_tokens(data_path), specials=['<unk>', '<pad>'], special_first=True)
-vocab.set_default_index(vocab["<unk>"])
+def save_vocab(vocab, path):
+    with open(path, 'w') as f:
+        json.dump(vocab.stoi, f)
 
-# Model Parameters
-ntokens = len(vocab)
-emsize = 512
-nhid = 2048
-nlayers = 6
-nhead = 8
-dropout = 0.1
 
-# Training Parameters
-batch_size = 16
-num_epochs = 10
+def main():
+    # Build Vocabulary
+    data_path = "test_data.json"
+    vocab = build_vocab_from_iterator(yield_tokens(data_path), specials=['<unk>', '<pad>'], special_first=True)
+    vocab.set_default_index(vocab["<unk>"])
+    save_vocab(vocab, 'vocab.json')
 
-# Create Dataset and DataLoader
-dataset = PaperDataset(data_path, vocab)
-train_size = int(0.8 * len(dataset))
-valid_size = len(dataset) - train_size
-train_dataset, valid_dataset = random_split(dataset, [train_size, valid_size])
+    # Model Parameters
+    ntokens = len(vocab)
+    emsize = 512
+    nhid = 2048
+    nlayers = 6
+    nhead = 8
+    dropout = 0.1
 
-train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, collate_fn=pad_sequence)
-valid_dataloader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=True, collate_fn=pad_sequence)
+    # Training Parameters
+    batch_size = 16
+    num_epochs = 10
 
-# Initialize Model, Criterion, and Optimizer
-model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device)
-criterion = nn.CrossEntropyLoss(ignore_index=vocab["<pad>"])
-optimizer = optim.Adam(model.parameters())
+    # Create Dataset and DataLoader
+    dataset = PaperDataset(data_path, vocab)
+    train_size = int(0.8 * len(dataset))
+    valid_size = len(dataset) - train_size
+    train_dataset, valid_dataset = random_split(dataset, [train_size, valid_size])
 
-# Training Loop
-best_val_loss = float("inf")
-best_model = None
+    train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, collate_fn=pad_sequence)
+    valid_dataloader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=True, collate_fn=pad_sequence)
 
-for epoch in range(1, num_epochs + 1):
-    print(f"training started = {epoch}")
-    train_loss = train_transformer(model, train_dataloader, criterion, optimizer)
-    print(f"training finished = {epoch}")
+    # Initialize Model, Criterion, and Optimizer
+    model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device)
+    criterion = nn.CrossEntropyLoss(ignore_index=vocab["<pad>"])
+    optimizer = optim.Adam(model.parameters())
 
-    print(f"evaluate started = {epoch}")
-    val_loss = evaluate(model, valid_dataloader, criterion)
-    print(f"evaluate finishing = {epoch}")
-    print(f"Epoch: {epoch}, Train Loss: {train_loss:.2f}, Val Loss: {val_loss:.2f}")
+    # Training Loop
+    best_val_loss = float("inf")
+    best_model = None
 
-    if val_loss < best_val_loss:
-        best_val_loss = val_loss
-        best_model = model
+    for epoch in range(1, num_epochs + 1):
+        print(f"training started = {epoch}")
+        train_loss = train_transformer(model, train_dataloader, criterion, optimizer)
+        print(f"training finished = {epoch}")
 
-# Save the best model
-torch.save(best_model.state_dict(), "best_model.pth")
+        print(f"evaluate started = {epoch}")
+        val_loss = evaluate(model, valid_dataloader, criterion)
+        print(f"evaluate finishing = {epoch}")
+        print(f"Epoch: {epoch}, Train Loss: {train_loss:.2f}, Val Loss: {val_loss:.2f}")
+
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            best_model = model
+
+    # Save the best model
+    torch.save(best_model.state_dict(), "best_model.pth")
+
+
+if __name__ == "__main__":
+    main()
