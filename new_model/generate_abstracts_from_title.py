@@ -1,45 +1,71 @@
+import json
 import torch
-from torchtext.data.utils import get_tokenizer
-from torchtext.vocab import build_vocab_from_iterator
-from arxiv_dataset import ArxivDataset
-from transformer_final_training import TransformerModel, PositionalEncoding
+import torch.nn as nn
+from torch.autograd import Variable
+from training_model_for_abstracts import TransformerModel, PaperDataset
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-tokenizer = get_tokenizer("spacy", language="en_core_web_sm")
-train_dataset, _, _ = ArxivDataset.splits(root='.', tokenizer=tokenizer)
-vocab = build_vocab_from_iterator(yield_tokens(train_dataset))
 
-ntokens = len(vocab)
-emsize = 200
-nhid = 200
-nlayers = 2
-nhead = 2
-dropout = 0.2
-
-model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device)
-model.load_state_dict(torch.load('best_model.pt'))
-model.eval()
+def load_vocab(path):
+    with open(path, "r") as f:
+        vocab = json.load(f)
+    vocab.itos = {int(k): v for k, v in vocab["itos"].items()}
+    return vocab
 
 
-def generate_abstract(model, input_text, max_len=50):
-    input_tokens = [vocab[token] for token in tokenizer(input_text)]
-    input_tensor = torch.tensor(input_tokens, dtype=torch.long, device=device).unsqueeze(1)
-
-    output_tokens = []
-    with torch.no_grad():
-        for _ in range(max_len):
-            output = model(input_tensor)
-            predicted_token = torch.argmax(output, dim=-1)[-1, :]
-            input_tensor = torch.cat([input_tensor, predicted_token.unsqueeze(1)], dim=0)
-            output_tokens.append(predicted_token.item())
-
-            if predicted_token.item() == vocab["<eos>"]:
-                break
-
-    return ' '.join([vocab.itos[token] for token in output_tokens])
+def tokenize(text):
+    return [token.lower() for token in text.split()]
 
 
-input_text = "Given the recent advances in deep learning,"
-generated_abstract = generate_abstract(model, input_text)
-print(generated_abstract)
+def load_model(path):
+    vocab = load_vocab("vocab.json")
+    ntokens = len(vocab)
+    emsize = 512
+    nhead = 8
+    nhid = 2048
+    nlayers = 3
+    dropout = 0.1
+
+    model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device)
+    model.load_state_dict(torch.load(path))
+    model.eval()
+    return model, vocab
+
+
+def generate_abstract(model, vocab, title, author, category, max_len=200):
+    model.eval()
+    src_text = f"{title} {author} {category}"
+    src_tokens = tokenize(src_text)
+    src_tensor = torch.tensor([vocab[token] for token in src_tokens], dtype=torch.long).unsqueeze(1).to(device)
+
+    output_tokens = [vocab["<bos>"]]
+    for i in range(max_len):
+        tgt_tensor = torch.tensor(output_tokens, dtype=torch.long).unsqueeze(1).to(device)
+        with torch.no_grad():
+            output = model(src_tensor, tgt_tensor)
+        next_token = output.argmax(2)[-1, 0].item()
+        if next_token == vocab["<eos>"]:
+            break
+        output_tokens.append(next_token)
+
+    abstract = " ".join(
+        [vocab.itos[token] for token in output_tokens if token not in (vocab["<bos>"], vocab["<eos>"], vocab["<pad>"])])
+    return abstract
+
+
+def main():
+    model_path = "best_model.pth"
+    model, vocab = load_model(model_path)
+
+    # Test the model with sample input data
+    title = "Example Title"
+    author = "Author Name"
+    category = "Category"
+
+    generated_abstract = generate_abstract(model, vocab, title, author, category)
+    print("Generated Abstract:\n", generated_abstract)
+
+
+if __name__ == "__main__":
+    main()

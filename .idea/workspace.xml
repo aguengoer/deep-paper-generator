@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="51e9da9a-7f87-4247-9024-7dac653b0ab3" name="Changes" comment="adopted new model">
+    <list default="true" id="51e9da9a-7f87-4247-9024-7dac653b0ab3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/new_model/training_model_for_abstracts.py" beforeDir="false" afterPath="$PROJECT_DIR$/new_model/training_model_for_abstracts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/new_model/generate_abstracts_from_title.py" beforeDir="false" afterPath="$PROJECT_DIR$/new_model/generate_abstracts_from_title.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +51,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.training_model_for_abstracts">
+  <component name="RunManager" selected="Python.generate_abstracts_from_title">
     <configuration name="PipelineExecutor" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="nlp-pipeline" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -118,6 +118,28 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="generate_abstracts_from_title" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="nlp-pipeline" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/new_model" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/new_model/generate_abstracts_from_title.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="generate_test_abstract" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="nlp-pipeline" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -164,6 +186,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.generate_abstracts_from_title" />
         <item itemvalue="Python.training_model_for_abstracts" />
         <item itemvalue="Python.generate_test_abstract" />
         <item itemvalue="Python.Transformer_final_training" />
@@ -183,7 +206,7 @@
       <workItem from="1680012077341" duration="6110000" />
       <workItem from="1681652647236" duration="5307000" />
       <workItem from="1681731677959" duration="18219000" />
-      <workItem from="1681814350395" duration="6146000" />
+      <workItem from="1681814350395" duration="6785000" />
     </task>
     <task id="LOCAL-00001" summary=".">
       <created>1675033913401</created>
@@ -283,7 +306,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681807549730</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="adopted new model">
+      <created>1681856340626</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1681856340626</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -322,6 +352,7 @@
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/nlp_pipeline$generate_abstracts_from_title.coverage" NAME="generate_abstracts_from_title Coverage Results" MODIFIED="1681856847618" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/new_model" />
     <SUITE FILE_PATH="coverage/nlp_pipeline$generate_abstract.coverage" NAME="generate_abstract Coverage Results" MODIFIED="1679958614302" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/nlp_pipeline$generate_test_abstract.coverage" NAME="generate_test_abstract Coverage Results" MODIFIED="1681732256001" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/nlp_pipeline$Transformer.coverage" NAME="Transformer Coverage Results" MODIFIED="1679002024278" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
