@@ -109,6 +109,7 @@ def pad_sequence(batch):
 def train_transformer(transformer, dataloader, criterion, optimizer):
     transformer.train()
     total_loss = 0
+    count = 0
     for inputs, targets in dataloader:
         inputs = inputs.to(device)
         targets = targets.to(device)
@@ -120,7 +121,9 @@ def train_transformer(transformer, dataloader, criterion, optimizer):
         optimizer.step()
 
         total_loss += loss.item()
-        print(f"training total loss = {total_loss}")
+        print(f"training loss = {total_loss / len(dataloader)}")
+        print(f"round {count}")
+        count = count + 1
     return total_loss / len(dataloader)
 
 
@@ -185,13 +188,13 @@ best_val_loss = float("inf")
 best_model = None
 
 for epoch in range(1, num_epochs + 1):
-    print(f"training started = {num_epochs}")
+    print(f"training started = {epoch}")
     train_loss = train_transformer(model, train_dataloader, criterion, optimizer)
-    print(f"training finished = {num_epochs}")
+    print(f"training finished = {epoch}")
 
-    print(f"evaluate started = {num_epochs}")
+    print(f"evaluate started = {epoch}")
     val_loss = evaluate(model, valid_dataloader, criterion)
-    print(f"evaluate finishing = {num_epochs}")
+    print(f"evaluate finishing = {epoch}")
     print(f"Epoch: {epoch}, Train Loss: {train_loss:.2f}, Val Loss: {val_loss:.2f}")
 
     if val_loss < best_val_loss:
