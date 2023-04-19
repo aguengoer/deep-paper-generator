@@ -7,6 +7,7 @@
     <list default="true" id="51e9da9a-7f87-4247-9024-7dac653b0ab3" name="Changes" comment=".">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/new_model/training_model_for_abstracts.py" beforeDir="false" afterPath="$PROJECT_DIR$/new_model/training_model_for_abstracts.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -207,7 +208,7 @@
       <workItem from="1681652647236" duration="5307000" />
       <workItem from="1681731677959" duration="18219000" />
       <workItem from="1681814350395" duration="10002000" />
-      <workItem from="1681889670133" duration="3402000" />
+      <workItem from="1681889670133" duration="4644000" />
     </task>
     <task id="LOCAL-00001" summary=".">
       <created>1675033913401</created>
@@ -356,7 +357,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681894311184</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary=".">
+      <created>1681894457539</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1681894457539</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -388,12 +396,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/new_model/training_model_for_abstracts.py</url>
-          <line>110</line>
+          <line>111</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/new_model/training_model_for_abstracts.py</url>
-          <line>162</line>
+          <line>161</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

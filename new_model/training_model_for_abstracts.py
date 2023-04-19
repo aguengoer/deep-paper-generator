@@ -76,11 +76,12 @@ class PaperDataset(Dataset):
 
     def __getitem__(self, idx):
         title = self.data[idx]['title']
-        authors = self.data[idx]['authors']
-        categories = self.data[idx]['categories']
+        # authors = self.data[idx]['authors']
+        # categories = self.data[idx]['categories']
         abstract = self.data[idx]['abstract']
 
-        input_str = f"{title} {authors} {categories}"
+        # input_str = f"{title} {authors} {categories}"
+        input_str = f"{title}"
         input_tensor = torch.tensor([self.vocab[token] for token in self.tokenizer(input_str)], dtype=torch.long)
         target_tensor = torch.tensor([self.vocab[token] for token in self.tokenizer(abstract)], dtype=torch.long)
 
@@ -121,8 +122,6 @@ def train_transformer(transformer, dataloader, criterion, optimizer, vocab):
         optimizer.step()
 
         total_loss += loss.item()
-        print(f"training loss = {total_loss / len(dataloader)}")
-        print(f"round {count}")
         count = count + 1
     return total_loss / len(dataloader)
 
@@ -139,7 +138,6 @@ def evaluate(transformer, dataloader, criterion, vocab):
             loss = criterion(output.reshape(-1, len(vocab)), targets[1:].reshape(-1))
 
             total_loss += loss.item()
-            print(f"eval total loss = {total_loss}")
     return total_loss / len(dataloader)
 
 
@@ -148,7 +146,8 @@ def yield_tokens(data_path):
     with open(data_path, 'r') as f:
         data = json.load(f)
     for item in data:
-        yield tokenizer(f"{item['title']} {item['authors']} {item['categories']}")
+        # yield tokenizer(f"{item['title']} {item['authors']} {item['categories']}")
+        yield tokenizer(f"{item['title']}")
         yield tokenizer(item['abstract'])
 
 
@@ -195,13 +194,9 @@ def main():
     best_model = None
 
     for epoch in range(1, num_epochs + 1):
-        print(f"training started = {epoch}")
         train_loss = train_transformer(model, train_dataloader, criterion, optimizer, vocab)
-        print(f"training finished = {epoch}")
 
-        print(f"evaluate started = {epoch}")
         val_loss = evaluate(model, valid_dataloader, criterion, vocab)
-        print(f"evaluate finishing = {epoch}")
         print(f"Epoch: {epoch}, Train Loss: {train_loss:.2f}, Val Loss: {val_loss:.2f}")
 
         if val_loss < best_val_loss:

@@ -265,4 +265,4 @@ trg_field.pth
 transformer_model.pt
 new_model/best_model.pth
 
-.idea
+.idea/workspace.xml
