@@ -27,10 +27,11 @@ def rebuild_vocab(vocab_data):
     return CustomVocab(stoi, itos)
 
 
-def generate_abstract(model, tokenizer, vocab, title, authors, categories, max_length=150):
+def generate_abstract(model, tokenizer, vocab, title, max_length=150):
     model.eval()
     with torch.no_grad():
-        input_str = f"{title} {authors} {categories}"
+        #input_str = f"{title} {authors} {categories}"
+        input_str = f"{title}"
         input_tokens = [vocab[token] for token in tokenizer(input_str)]
         input_tensor = torch.tensor([input_tokens], dtype=torch.long).t().to(device)
 
@@ -68,11 +69,10 @@ def main():
 
     # Define your inputs
     title = "Fermionic superstring loop amplitudes in the pure spinor formalism"
-    authors = "Paul"
-    categories = "math"
+    # authors = "Paul"
+    # categories = "math"
 
-    abstract = generate_abstract(model, get_tokenizer('spacy', language='en_core_web_sm'), vocab, title, authors,
-                                 categories)
+    abstract = generate_abstract(model, get_tokenizer('spacy', language='en_core_web_sm'), vocab, title)
     print("Generated Abstract:")
     print(abstract)
 

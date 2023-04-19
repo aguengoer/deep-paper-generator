@@ -1,11 +1,15 @@
 import json
 import math
+import time
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader, random_split
 from torchtext.data.utils import get_tokenizer
 from torchtext.vocab import build_vocab_from_iterator
+from datetime import datetime
+
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -165,14 +169,14 @@ def main():
 
     # Model Parameters
     ntokens = len(vocab)
-    emsize = 512
+    emsize = 1024
     nhid = 2048
-    nlayers = 6
+    nlayers = 8
     nhead = 8
     dropout = 0.1
 
     # Training Parameters
-    batch_size = 16
+    batch_size = 32
     num_epochs = 10
 
     # Create Dataset and DataLoader
@@ -188,20 +192,44 @@ def main():
     model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device)
     criterion = nn.CrossEntropyLoss(ignore_index=vocab["<pad>"])
     optimizer = optim.Adam(model.parameters())
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=1, factor=0.5, verbose=True)
 
     # Training Loop
     best_val_loss = float("inf")
     best_model = None
+    # Early stopping parameters
+    patience = 3
+    min_delta = 0.01
+    counter = 0
 
     for epoch in range(1, num_epochs + 1):
+
+        epoch_start_time = time.time()
+
+        print(f"Epoch {epoch} starting time: {datetime.now()}")
+
         train_loss = train_transformer(model, train_dataloader, criterion, optimizer, vocab)
 
         val_loss = evaluate(model, valid_dataloader, criterion, vocab)
+
+        scheduler.step(val_loss)
+
+        print('-' * 89)
         print(f"Epoch: {epoch}, Train Loss: {train_loss:.2f}, Val Loss: {val_loss:.2f}")
+        print(
+            '| end of epoch {:3d} | time: {:5.2f}s | valid loss {:5.2f}'.format(epoch, (time.time() - epoch_start_time),
+                                                                                val_loss))
+        print('-' * 89)
 
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             best_model = model
+            counter = 0
+        else:
+            counter = 1
+        if counter >= patience:
+            print("Early stopping triggered after {} epochs.".format(epoch))
+            break
 
     # Save the best model
     torch.save(best_model.state_dict(), "best_model.pth")
