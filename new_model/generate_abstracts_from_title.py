@@ -1,16 +1,26 @@
 import json
 import torch
 import torch.nn as nn
-from torch.autograd import Variable
-from training_model_for_abstracts import TransformerModel, PaperDataset
+from training_model_for_abstracts import TransformerModel
+from typing import Tuple
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
+class Vocab:
+    def __init__(self):
+        self.stoi = None
+        self.itos = None
+
+
 def load_vocab(path):
     with open(path, "r") as f:
-        vocab = json.load(f)
-    vocab.itos = {int(k): v for k, v in vocab["itos"].items()}
+        data = json.load(f)
+
+    vocab = Vocab()
+    vocab.stoi = data["stoi"]
+    vocab.itos = data["itos"]
+
     return vocab
 
 
@@ -18,18 +28,32 @@ def tokenize(text):
     return [token.lower() for token in text.split()]
 
 
-def load_model(path):
-    vocab = load_vocab("vocab.json")
-    ntokens = len(vocab)
+def load_model(path: str) -> Tuple[nn.Module, Vocab]:
+    with open("vocab.json", "r") as f:
+        data = json.load(f)
+    vocab = Vocab()
+    vocab.itos = data["itos"]
+    vocab.stoi = data["stoi"]
+
+    # Model Parameters
+    ntokens = len(vocab.stoi)
     emsize = 512
-    nhead = 8
     nhid = 2048
-    nlayers = 3
+    nlayers = 6
+    nhead = 8
     dropout = 0.1
 
+    # Training Parameters
+    batch_size = 16
+    num_epochs = 10
     model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device)
-    model.load_state_dict(torch.load(path))
-    model.eval()
+
+    # Load the model state_dict
+    model_state_dict = torch.load(path)
+
+    # Replace the model state_dict with the loaded state_dict
+    model.load_state_dict(model_state_dict)
+
     return model, vocab
 
 

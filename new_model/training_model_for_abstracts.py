@@ -106,7 +106,7 @@ def pad_sequence(batch):
     return inputs_padded.t(), targets_padded.t()
 
 
-def train_transformer(transformer, dataloader, criterion, optimizer):
+def train_transformer(transformer, dataloader, criterion, optimizer, vocab):
     transformer.train()
     total_loss = 0
     count = 0
@@ -127,7 +127,7 @@ def train_transformer(transformer, dataloader, criterion, optimizer):
     return total_loss / len(dataloader)
 
 
-def evaluate(transformer, dataloader, criterion):
+def evaluate(transformer, dataloader, criterion, vocab):
     transformer.eval()
     total_loss = 0
     with torch.no_grad():
@@ -153,8 +153,8 @@ def yield_tokens(data_path):
 
 
 def save_vocab(vocab, path):
-    with open(path, 'w') as f:
-        json.dump(vocab.stoi, f)
+    with open(path, "w") as f:
+        json.dump({"stoi": vocab.get_stoi(), "itos": vocab.get_itos()}, f)
 
 
 def main():
@@ -196,11 +196,11 @@ def main():
 
     for epoch in range(1, num_epochs + 1):
         print(f"training started = {epoch}")
-        train_loss = train_transformer(model, train_dataloader, criterion, optimizer)
+        train_loss = train_transformer(model, train_dataloader, criterion, optimizer, vocab)
         print(f"training finished = {epoch}")
 
         print(f"evaluate started = {epoch}")
-        val_loss = evaluate(model, valid_dataloader, criterion)
+        val_loss = evaluate(model, valid_dataloader, criterion, vocab)
         print(f"evaluate finishing = {epoch}")
         print(f"Epoch: {epoch}, Train Loss: {train_loss:.2f}, Val Loss: {val_loss:.2f}")
 
