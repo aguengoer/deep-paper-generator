@@ -5,9 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="51e9da9a-7f87-4247-9024-7dac653b0ab3" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/new_model/generate_abstracts_from_title.py" beforeDir="false" afterPath="$PROJECT_DIR$/new_model/generate_abstracts_from_title.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/new_model/training_model_for_abstracts.py" beforeDir="false" afterPath="$PROJECT_DIR$/new_model/training_model_for_abstracts.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -208,6 +207,7 @@
       <workItem from="1681652647236" duration="5307000" />
       <workItem from="1681731677959" duration="18219000" />
       <workItem from="1681814350395" duration="10002000" />
+      <workItem from="1681889670133" duration="276000" />
     </task>
     <task id="LOCAL-00001" summary=".">
       <created>1675033913401</created>
@@ -328,7 +328,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681857535474</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="adopted new model">
+      <created>1681889724523</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1681889724524</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
