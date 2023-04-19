@@ -1,94 +1,80 @@
 import json
 import torch
-import torch.nn as nn
-from training_model_for_abstracts import TransformerModel
-from typing import Tuple
+from torchtext.data.utils import get_tokenizer
+from torchtext.vocab import Vocab
+from collections import Counter
+from training_model_for_abstracts import \
+    TransformerModel  # Replace 'your_training_script' with the name of your training script file
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-class Vocab:
-    def __init__(self):
-        self.stoi = None
-        self.itos = None
+class CustomVocab:
+    def __init__(self, stoi, itos):
+        self.stoi = stoi
+        self.itos = itos
+
+    def __len__(self):
+        return len(self.itos)
+
+    def __getitem__(self, token):
+        return self.stoi.get(token, self.stoi['<unk>'])
 
 
-def load_vocab(path):
-    with open(path, "r") as f:
-        data = json.load(f)
-
-    vocab = Vocab()
-    vocab.stoi = data["stoi"]
-    vocab.itos = data["itos"]
-
-    return vocab
+def rebuild_vocab(vocab_data):
+    stoi = vocab_data["stoi"]
+    itos = vocab_data["itos"]
+    return CustomVocab(stoi, itos)
 
 
-def tokenize(text):
-    return [token.lower() for token in text.split()]
+def generate_abstract(model, tokenizer, vocab, title, authors, categories, max_length=150):
+    model.eval()
+    with torch.no_grad():
+        input_str = f"{title} {authors} {categories}"
+        input_tokens = [vocab[token] for token in tokenizer(input_str)]
+        input_tensor = torch.tensor([input_tokens], dtype=torch.long).t().to(device)
+
+        output_tokens = [vocab["<pad>"]]
+        for _ in range(max_length):
+            output_tensor = torch.tensor([output_tokens], dtype=torch.long).t().to(device)
+            logits = model(input_tensor, output_tensor)
+            next_token = torch.argmax(logits[-1, 0], dim=-1).item()
+            if next_token == vocab["<pad>"]:
+                break
+            output_tokens.append(next_token)
+
+        print(" ".join([vocab.itos[token] for token in output_tokens[1:]]))
+        return " ".join([vocab.itos[token] for token in output_tokens[1:]])
 
 
-def load_model(path: str) -> Tuple[nn.Module, Vocab]:
-    with open("vocab.json", "r") as f:
-        data = json.load(f)
-    vocab = Vocab()
-    vocab.itos = data["itos"]
-    vocab.stoi = data["stoi"]
+def main():
+    model_path = "best_model.pth"
+    vocab_path = "vocab.json"
 
-    # Model Parameters
-    ntokens = len(vocab.stoi)
+    # Load the vocabulary
+    with open(vocab_path, "r") as f:
+        vocab_data = json.load(f)
+    vocab = rebuild_vocab(vocab_data)
+
+    # Load the model
+    ntokens = len(vocab)
     emsize = 512
     nhid = 2048
     nlayers = 6
     nhead = 8
     dropout = 0.1
-
-    # Training Parameters
-    batch_size = 16
-    num_epochs = 10
     model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device)
+    model.load_state_dict(torch.load(model_path))
 
-    # Load the model state_dict
-    model_state_dict = torch.load(path)
+    # Define your inputs
+    title = "Fermionic superstring loop amplitudes in the pure spinor formalism"
+    authors = "Paul Harvey"
+    categories = "it"
 
-    # Replace the model state_dict with the loaded state_dict
-    model.load_state_dict(model_state_dict)
-
-    return model, vocab
-
-
-def generate_abstract(model, vocab, title, author, category, max_len=200):
-    model.eval()
-    src_text = f"{title} {author} {category}"
-    src_tokens = tokenize(src_text)
-    src_tensor = torch.tensor([vocab[token] for token in src_tokens], dtype=torch.long).unsqueeze(1).to(device)
-
-    output_tokens = [vocab["<bos>"]]
-    for i in range(max_len):
-        tgt_tensor = torch.tensor(output_tokens, dtype=torch.long).unsqueeze(1).to(device)
-        with torch.no_grad():
-            output = model(src_tensor, tgt_tensor)
-        next_token = output.argmax(2)[-1, 0].item()
-        if next_token == vocab["<eos>"]:
-            break
-        output_tokens.append(next_token)
-
-    abstract = " ".join(
-        [vocab.itos[token] for token in output_tokens if token not in (vocab["<bos>"], vocab["<eos>"], vocab["<pad>"])])
-    return abstract
-
-
-def main():
-    model_path = "best_model.pth"
-    model, vocab = load_model(model_path)
-
-    # Test the model with sample input data
-    title = "Example Title"
-    author = "Author Name"
-    category = "Category"
-
-    generated_abstract = generate_abstract(model, vocab, title, author, category)
-    print("Generated Abstract:\n", generated_abstract)
+    abstract = generate_abstract(model, get_tokenizer('spacy', language='en_core_web_sm'), vocab, title, authors,
+                                 categories)
+    print("Generated Abstract:")
+    print(abstract)
 
 
 if __name__ == "__main__":
