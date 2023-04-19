@@ -43,7 +43,7 @@ def generate_abstract(model, tokenizer, vocab, title, authors, categories, max_l
                 break
             output_tokens.append(next_token)
 
-        print(" ".join([vocab.itos[token] for token in output_tokens[1:]]))
+        #print(" ".join([vocab.itos[token] for token in output_tokens[1:]]))
         return " ".join([vocab.itos[token] for token in output_tokens[1:]])
 
 
@@ -68,8 +68,8 @@ def main():
 
     # Define your inputs
     title = "Fermionic superstring loop amplitudes in the pure spinor formalism"
-    authors = "Paul Harvey"
-    categories = "it"
+    authors = "Paul"
+    categories = "math"
 
     abstract = generate_abstract(model, get_tokenizer('spacy', language='en_core_web_sm'), vocab, title, authors,
                                  categories)

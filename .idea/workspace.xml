@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="51e9da9a-7f87-4247-9024-7dac653b0ab3" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/new_model/generate_abstracts_from_title.py" beforeDir="false" afterPath="$PROJECT_DIR$/new_model/generate_abstracts_from_title.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -207,7 +206,7 @@
       <workItem from="1681652647236" duration="5307000" />
       <workItem from="1681731677959" duration="18219000" />
       <workItem from="1681814350395" duration="10002000" />
-      <workItem from="1681889670133" duration="2610000" />
+      <workItem from="1681889670133" duration="2968000" />
     </task>
     <task id="LOCAL-00001" summary=".">
       <created>1675033913401</created>
@@ -342,7 +341,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681889955512</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary=".">
+      <created>1681893852912</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1681893852912</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -382,11 +388,16 @@
           <line>162</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/new_model/generate_abstracts_from_title.py</url>
+          <line>45</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/nlp_pipeline$generate_abstracts_from_title.coverage" NAME="generate_abstracts_from_title Coverage Results" MODIFIED="1681893602795" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/new_model" />
+    <SUITE FILE_PATH="coverage/nlp_pipeline$generate_abstracts_from_title.coverage" NAME="generate_abstracts_from_title Coverage Results" MODIFIED="1681893887401" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/new_model" />
     <SUITE FILE_PATH="coverage/nlp_pipeline$generate_abstract.coverage" NAME="generate_abstract Coverage Results" MODIFIED="1679958614302" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/nlp_pipeline$generate_test_abstract.coverage" NAME="generate_test_abstract Coverage Results" MODIFIED="1681732256001" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/nlp_pipeline$Transformer.coverage" NAME="Transformer Coverage Results" MODIFIED="1679002024278" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
