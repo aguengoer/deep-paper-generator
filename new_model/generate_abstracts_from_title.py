@@ -27,45 +27,26 @@ def rebuild_vocab(vocab_data):
     return CustomVocab(stoi, itos)
 
 
-# def generate_abstract(model, tokenizer, vocab, title, max_length=150):
-#     model.eval()
-#     with torch.no_grad():
-#         # input_str = f"{title} {authors} {categories}"
-#         input_str = f"{title}"
-#         input_tokens = [vocab[token] for token in tokenizer(input_str)]
-#         input_tensor = torch.tensor([input_tokens], dtype=torch.long).t().to(device)
-#
-#         output_tokens = [vocab["<pad>"]]
-#         for _ in range(max_length):
-#             output_tensor = torch.tensor([output_tokens], dtype=torch.long).t().to(device)
-#             logits = model(input_tensor, output_tensor)
-#             next_token = torch.argmax(logits[-1, 0], dim=-1).item()
-#             if next_token == vocab["<pad>"]:
-#                 break
-#             output_tokens.append(next_token)
-#
-#         # print(" ".join([vocab.itos[token] for token in output_tokens[1:]]))
-#         return " ".join([vocab.itos[token] for token in output_tokens[1:]])
-
-def generate_abstract(model, tokenizer, vocab, title, max_length=150):
+def generate_abstract(model, title, vocab, max_length=50, temperature=1.0):
     model.eval()
-    with torch.no_grad():
-        input_str = f"{title}"
-        input_tokens = [vocab[token] for token in tokenizer(input_str)]
-        input_tensor = torch.tensor([input_tokens], dtype=torch.long).t().to(device)
 
-        output_tokens = [vocab["<sos>"]]
-        for _ in range(max_length):
-            output_tensor = torch.tensor([output_tokens], dtype=torch.long).t().to(device)
-            logits = model(input_tensor, output_tensor)
-            next_token = torch.argmax(logits[-1, 0], dim=-1).item()
-            if next_token == vocab["<eos>"]:
-                break
-            output_tokens.append(next_token)
+    tokenizer = get_tokenizer('basic_english')
+    tokens = [vocab[token] for token in tokenizer(title)]
 
-        # Convert tokens to text, skipping <unk> tokens
-        generated_text = " ".join([vocab.itos[token] for token in output_tokens[1:]])
-        return generated_text
+    input_tensor = torch.tensor(tokens, dtype=torch.long).unsqueeze(1).to(device)
+    abstract_tokens = []
+
+    for _ in range(max_length):
+        with torch.no_grad():
+            output = model(input_tensor, input_tensor)
+            logits = output[-1, 0, :] / temperature
+            probabilities = torch.softmax(logits, dim=-1)
+            predicted_token = torch.multinomial(probabilities, 1).item()
+            abstract_tokens.append(predicted_token)
+            input_tensor = torch.cat((input_tensor, torch.tensor([[predicted_token]], dtype=torch.long).to(device)), 0)
+
+    abstract = " ".join(vocab.itos[token] for token in abstract_tokens)
+    return abstract
 
 
 def main():
@@ -94,7 +75,7 @@ def main():
     # authors = "Paul"
     # categories = "math"
 
-    abstract = generate_abstract(model, get_tokenizer('basic_english'), vocab, title)
+    abstract = generate_abstract(model, title, vocab)
     print("Generated Abstract:")
     print(abstract)
 
