@@ -30,7 +30,7 @@ def rebuild_vocab(vocab_data):
 def generate_abstract(model, tokenizer, vocab, title, max_length=150):
     model.eval()
     with torch.no_grad():
-        #input_str = f"{title} {authors} {categories}"
+        # input_str = f"{title} {authors} {categories}"
         input_str = f"{title}"
         input_tokens = [vocab[token] for token in tokenizer(input_str)]
         input_tensor = torch.tensor([input_tokens], dtype=torch.long).t().to(device)
@@ -44,7 +44,7 @@ def generate_abstract(model, tokenizer, vocab, title, max_length=150):
                 break
             output_tokens.append(next_token)
 
-        #print(" ".join([vocab.itos[token] for token in output_tokens[1:]]))
+        # print(" ".join([vocab.itos[token] for token in output_tokens[1:]]))
         return " ".join([vocab.itos[token] for token in output_tokens[1:]])
 
 
@@ -58,17 +58,19 @@ def main():
     vocab = rebuild_vocab(vocab_data)
 
     # Load the model
+    # Model Parameters
     ntokens = len(vocab)
-    emsize = 512
+    emsize = 1024
     nhid = 2048
-    nlayers = 6
+    nlayers = 8
     nhead = 8
     dropout = 0.1
+
     model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device)
     model.load_state_dict(torch.load(model_path))
 
     # Define your inputs
-    title = "Fermionic superstring loop amplitudes in the pure spinor formalism"
+    title = "deep learning is really super"
     # authors = "Paul"
     # categories = "math"
 
