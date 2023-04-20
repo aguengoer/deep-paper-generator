@@ -150,7 +150,7 @@ def yield_tokens(data_path):
         data = json.load(f)
     for item in data:
         # yield tokenizer(f"{item['title']} {item['authors']} {item['categories']}")
-        yield tokenizer(f"{item['title']}")
+        yield tokenizer(item['title'])
         yield tokenizer(item['abstract'])
 
 
@@ -161,7 +161,7 @@ def save_vocab(vocab, path):
 
 def main():
     # Build Vocabulary
-    data_path = "test_data_100.json"
+    data_path = "test_data.json"
     vocab = build_vocab_from_iterator(yield_tokens(data_path), specials=['<unk>', '<pad>', '<sos>', '<eos>'],
                                       special_first=True)
     vocab.set_default_index(vocab["<unk>"])

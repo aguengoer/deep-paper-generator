@@ -50,7 +50,7 @@ def generate_abstract(model, title, vocab, max_length=50, temperature=1.0):
 
 
 def main():
-    model_path = "best_model_v2.pth"
+    model_path = "best_model.pth"
     vocab_path = "vocab.json"
 
     # Load the vocabulary
@@ -60,11 +60,11 @@ def main():
 
     # Load the model
     # Model Parameters
-    ntokens = len(vocab)
-    emsize = 512
-    nhid = 4096
-    nlayers = 16
-    nhead = 16
+    ntokens = 54343
+    emsize = 1024  # Change to match pre-trained model
+    nhid = 2048  # Change to match pre-trained model
+    nlayers = 8  # Change to match pre-trained model
+    nhead = 8  # Change to match pre-trained model
     dropout = 0.1
 
     model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device)
