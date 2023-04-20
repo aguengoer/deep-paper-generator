@@ -10,7 +10,6 @@ from torchtext.data.utils import get_tokenizer
 from torchtext.vocab import build_vocab_from_iterator
 from datetime import datetime
 
-
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
@@ -73,7 +72,7 @@ class PaperDataset(Dataset):
         with open(data_path, 'r') as f:
             self.data = json.load(f)
         self.vocab = vocab
-        self.tokenizer = get_tokenizer('spacy', language='en_core_web_sm')
+        self.tokenizer = get_tokenizer('basic_english')
 
     def __len__(self):
         return len(self.data)
@@ -146,7 +145,7 @@ def evaluate(transformer, dataloader, criterion, vocab):
 
 
 def yield_tokens(data_path):
-    tokenizer = get_tokenizer('spacy', language='en_core_web_sm')
+    tokenizer = get_tokenizer('basic_english')
     with open(data_path, 'r') as f:
         data = json.load(f)
     for item in data:
@@ -162,17 +161,18 @@ def save_vocab(vocab, path):
 
 def main():
     # Build Vocabulary
-    data_path = "test_data.json"
-    vocab = build_vocab_from_iterator(yield_tokens(data_path), specials=['<unk>', '<pad>'], special_first=True)
+    data_path = "test_data_100.json"
+    vocab = build_vocab_from_iterator(yield_tokens(data_path), specials=['<unk>', '<pad>', '<sos>', '<eos>'],
+                                      special_first=True)
     vocab.set_default_index(vocab["<unk>"])
     save_vocab(vocab, 'vocab.json')
 
     # Model Parameters
     ntokens = len(vocab)
-    emsize = 1024
-    nhid = 2048
-    nlayers = 8
-    nhead = 8
+    emsize = 512
+    nhid = 4096
+    nlayers = 16
+    nhead = 16
     dropout = 0.1
 
     # Training Parameters
@@ -226,13 +226,13 @@ def main():
             best_model = model
             counter = 0
         else:
-            counter = 1
+            counter = counter + 1
         if counter >= patience:
             print("Early stopping triggered after {} epochs.".format(epoch))
             break
 
     # Save the best model
-    torch.save(best_model.state_dict(), "best_model.pth")
+    torch.save(best_model.state_dict(), "best_model_v2.pth")
 
 
 if __name__ == "__main__":
