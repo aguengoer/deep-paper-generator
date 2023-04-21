@@ -1,16 +1,50 @@
 import json
 import math
+import re
+import string
 import time
 
+import nltk
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from nltk import pos_tag, word_tokenize
+from nltk.corpus import stopwords
 from torch.utils.data import Dataset, DataLoader, random_split
 from torchtext.data.utils import get_tokenizer
 from torchtext.vocab import build_vocab_from_iterator
 from datetime import datetime
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+nltk.download('stopwords')
+nltk.download('averaged_perceptron_tagger')
+stop_words = set(stopwords.words('english'))
+
+
+def preprocess_text(text):
+    # Remove LaTeX formulae
+    text = re.sub(r'\$[^$]*\$', '', text)
+
+    # Remove numbers
+    text = re.sub(r'\b\d+\b', '', text)
+
+    # Remove punctuation
+    text = text.translate(str.maketrans('', '', string.punctuation))
+
+    # Remove words with special characters and single characters (except 'a' and 'i')
+    text = ' '.join([word for word in text.split() if
+                     (not re.search(r'[^a-zA-Z]', word)) and (len(word) > 1 or word.lower() in ['a', 'i'])])
+
+    # Remove stopwords
+    text = ' '.join([word for word in text.split() if word.lower() not in stop_words])
+
+    # Remove unusual tokens and proper nouns
+    tagged_text = pos_tag(word_tokenize(text))
+    text = ' '.join(
+        [word for word, pos in tagged_text if (word.lower() != '<unk>') and (pos != 'NNP' and pos != 'NNPS')])
+
+    return text
 
 
 class PositionalEncoding(nn.Module):
@@ -78,10 +112,13 @@ class PaperDataset(Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
-        title = self.data[idx]['title']
+        # title = self.data[idx]['title']
         # authors = self.data[idx]['authors']
         # categories = self.data[idx]['categories']
-        abstract = self.data[idx]['abstract']
+        # abstract = self.data[idx]['abstract']
+
+        title = preprocess_text(self.data[idx]['title'])
+        abstract = preprocess_text(self.data[idx]['abstract'])
 
         # input_str = f"{title} {authors} {categories}"
         input_str = f"{title}"
@@ -150,8 +187,11 @@ def yield_tokens(data_path):
         data = json.load(f)
     for item in data:
         # yield tokenizer(f"{item['title']} {item['authors']} {item['categories']}")
-        yield tokenizer(item['title'])
-        yield tokenizer(item['abstract'])
+        title = preprocess_text(item['title'])
+        abstract = preprocess_text(item['abstract'])
+
+        yield tokenizer(title)
+        yield tokenizer(abstract)
 
 
 def save_vocab(vocab, path):
@@ -161,22 +201,22 @@ def save_vocab(vocab, path):
 
 def main():
     # Build Vocabulary
-    data_path = "test_data.json"
+    data_path = "test_data_100.json"
     vocab = build_vocab_from_iterator(yield_tokens(data_path), specials=['<unk>', '<pad>', '<sos>', '<eos>'],
                                       special_first=True)
     vocab.set_default_index(vocab["<unk>"])
-    save_vocab(vocab, 'vocab.json')
+    save_vocab(vocab, 'vocab_100.json')
 
     # Model Parameters
     ntokens = len(vocab)
-    emsize = 512
-    nhid = 4096
-    nlayers = 16
-    nhead = 16
+    emsize = 1024  # Change to match pre-trained model
+    nhid = 4096  # Change to match pre-trained model
+    nlayers = 8  # Change to match pre-trained model
+    nhead = 8  # Change to match pre-trained model
     dropout = 0.1
 
     # Training Parameters
-    batch_size = 32
+    batch_size = 16
     num_epochs = 10
 
     # Create Dataset and DataLoader

@@ -50,8 +50,8 @@ def generate_abstract(model, title, vocab, max_length=50, temperature=1.0):
 
 
 def main():
-    model_path = "best_model.pth"
-    vocab_path = "vocab.json"
+    model_path = "best_model_v2.pth"
+    vocab_path = "vocab_100.json"
 
     # Load the vocabulary
     with open(vocab_path, "r") as f:
@@ -60,9 +60,9 @@ def main():
 
     # Load the model
     # Model Parameters
-    ntokens = 54343
+    ntokens = len(vocab)
     emsize = 1024  # Change to match pre-trained model
-    nhid = 2048  # Change to match pre-trained model
+    nhid = 4096  # Change to match pre-trained model
     nlayers = 8  # Change to match pre-trained model
     nhead = 8  # Change to match pre-trained model
     dropout = 0.1
@@ -71,7 +71,7 @@ def main():
     model.load_state_dict(torch.load(model_path))
 
     # Define your inputs
-    title = "Smooth maps with singularities of bounded K-codimensions"
+    title = "mathematics with calculus"
     # authors = "Paul"
     # categories = "math"
 
