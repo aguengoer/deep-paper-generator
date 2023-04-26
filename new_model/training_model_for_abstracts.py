@@ -201,22 +201,22 @@ def save_vocab(vocab, path):
 
 def main():
     # Build Vocabulary
-    data_path = "test_data_100.json"
+    data_path = "test_data.json"
     vocab = build_vocab_from_iterator(yield_tokens(data_path), specials=['<unk>', '<pad>', '<sos>', '<eos>'],
                                       special_first=True)
     vocab.set_default_index(vocab["<unk>"])
-    save_vocab(vocab, 'vocab_100.json')
+    save_vocab(vocab, 'vocab.json')
 
     # Model Parameters
     ntokens = len(vocab)
-    emsize = 1024  # Change to match pre-trained model
-    nhid = 4096  # Change to match pre-trained model
-    nlayers = 8  # Change to match pre-trained model
-    nhead = 8  # Change to match pre-trained model
-    dropout = 0.1
+    emsize = 2048  # Change to match pre-trained model
+    nhid = 2048  # Change to match pre-trained model
+    nlayers = 16  # Change to match pre-trained model
+    nhead = 16  # Change to match pre-trained model
+    dropout = 0.2
 
     # Training Parameters
-    batch_size = 16
+    batch_size = 32
     num_epochs = 10
 
     # Create Dataset and DataLoader
@@ -265,6 +265,7 @@ def main():
             best_val_loss = val_loss
             best_model = model
             counter = 0
+            #torch.save(best_model.state_dict(), "best_model.pth")
         else:
             counter = counter + 1
         if counter >= patience:
@@ -272,7 +273,7 @@ def main():
             break
 
     # Save the best model
-    torch.save(best_model.state_dict(), "best_model_v2.pth")
+    torch.save(best_model.state_dict(), "best_model_v3.pth")
 
 
 if __name__ == "__main__":

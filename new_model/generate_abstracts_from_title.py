@@ -49,9 +49,14 @@ def generate_abstract(model, title, vocab, max_length=50, temperature=1.0):
     return abstract
 
 
+def remove_unk_tokens(abstract):
+    abstract = ' '.join([word for word in abstract.split() if word.lower() != '<unk>'])
+    return abstract
+
+
 def main():
-    model_path = "best_model_v2.pth"
-    vocab_path = "vocab_100.json"
+    model_path = "best_model_v3.pth"
+    vocab_path = "vocab.json"
 
     # Load the vocabulary
     with open(vocab_path, "r") as f:
@@ -60,22 +65,23 @@ def main():
 
     # Load the model
     # Model Parameters
+    # Model Parameters
     ntokens = len(vocab)
-    emsize = 1024  # Change to match pre-trained model
-    nhid = 4096  # Change to match pre-trained model
-    nlayers = 8  # Change to match pre-trained model
-    nhead = 8  # Change to match pre-trained model
-    dropout = 0.1
-
+    emsize = 2048  # Change to match pre-trained model
+    nhid = 2048  # Change to match pre-trained model
+    nlayers = 16  # Change to match pre-trained model
+    nhead = 16  # Change to match pre-trained model
+    dropout = 0.2
     model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device)
     model.load_state_dict(torch.load(model_path))
 
     # Define your inputs
-    title = "mathematics with calculus"
+    title = "Smooth maps with singularities of bounded K-codimensions"
     # authors = "Paul"
     # categories = "math"
 
     abstract = generate_abstract(model, title, vocab)
+    abstract = remove_unk_tokens(abstract)
     print("Generated Abstract:")
     print(abstract)
 
