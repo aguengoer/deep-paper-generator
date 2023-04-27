@@ -2,6 +2,12 @@ import torch
 import torch.nn.functional as F
 from transformers import GPT2Tokenizer
 from traning_model_with_gpt_2_for_abstract import GPT2Model  # Import the GPT2Model class from your training script
+from torchtext.data.metrics import bleu_score
+from lime.lime_text import LimeTextExplainer
+import json
+from tqdm import tqdm
+from transformers import GPT2LMHeadModel, GPT2Config
+
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -36,15 +42,48 @@ def generate_abstract(model, title, max_length=100, temperature=1.0):
         return generated_abstract.strip()
 
 
+def evaluate_model(model, test_data):
+    bleu_scores = []
+    lime_scores = []
+    explainer = LimeTextExplainer()
+
+    for data in tqdm(test_data):
+        title = data["title"]
+        real_abstract = data["abstract"]
+
+        generated_abstract = generate_abstract(model, title)
+
+        # Calculate BLEU score
+        bleu_scores.append(bleu_score([generated_abstract.split()], [real_abstract.split()]))
+
+        # Calculate LIME score
+        def predict_proba(texts):
+            model.eval()
+            outputs = []
+            for text in texts:
+                generated_abstract = generate_abstract(model, text)
+                bleu = bleu_score([generated_abstract.split()], [real_abstract.split()])
+                outputs.append([1 - bleu, bleu])
+            return torch.tensor(outputs).float().numpy()
+
+        exp = explainer.explain_instance(title, predict_proba, num_features=5, num_samples=20)
+        lime_scores.append(exp.score)
+
+    return bleu_scores, lime_scores
+
+
 def main():
     model_path = "best_model_gpt2.pth"
     model = GPT2Model().to(device)
     model.load_state_dict(torch.load(model_path, map_location=device))
 
-    test_title = "Deep learning for natural language processing"
-    generated_abstract = generate_abstract(model, test_title)
-    print(f"Title: {test_title}")
-    print(f"Generated abstract: {generated_abstract}")
+    with open("test_data_20.json", "r") as f:
+        test_data = json.load(f)
+
+    bleu_scores, lime_scores = evaluate_model(model, test_data)
+
+    print(f"Average BLEU score: {sum(bleu_scores) / len(bleu_scores)}")
+    print(f"Average LIME score: {sum(lime_scores) / len(lime_scores)}")
 
 
 if __name__ == "__main__":
