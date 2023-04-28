@@ -11,6 +11,7 @@ from torch.utils.data import Dataset, DataLoader, random_split
 from transformers import GPT2Tokenizer, GPT2LMHeadModel
 from datetime import datetime
 import nltk
+from tqdm import tqdm  # Add this import at the beginning of your script
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -96,7 +97,9 @@ def train_transformer(transformer, dataloader, criterion, optimizer):
     transformer.train()
     total_loss = 0
     count = 0
-    for batch in dataloader:
+
+    # Wrap your dataloader with tqdm for progress bar
+    for batch in tqdm(dataloader, desc="Training"):
         inputs, targets = batch
         # Skip empty batches
         if inputs.size(0) == 0 or targets.size(0) == 0:
@@ -109,12 +112,13 @@ def train_transformer(transformer, dataloader, criterion, optimizer):
         optimizer.zero_grad()
         logits = transformer(input_ids)
 
-        loss = criterion(logits.reshape(-1, logits.shape[-1]), labels.reshape(-1))  # Use .reshape() instead of .view()
+        loss = criterion(logits.reshape(-1, logits.shape[-1]), labels.reshape(-1))
         loss.backward()
         optimizer.step()
 
         total_loss += loss.item()
         count = count + 1
+
     return total_loss / len(dataloader)
 
 
@@ -122,7 +126,7 @@ def evaluate(transformer, dataloader, criterion):
     transformer.eval()
     total_loss = 0
     with torch.no_grad():
-        for batch in dataloader:
+        for batch in tqdm(dataloader, desc="Validation"):
             inputs, targets = batch
             # Skip empty batches
             if inputs.size(0) == 0 or targets.size(0) == 0:
@@ -131,8 +135,8 @@ def evaluate(transformer, dataloader, criterion):
             targets = targets.to(device)
             input_ids, labels = inputs[:, :-1], targets[:, 1:]
 
-            output, _ = transformer(input_ids, labels)
-            loss = criterion(output.view(-1, output.shape[-1]), labels.view(-1))
+            logits = transformer(input_ids)  # Change this line
+            loss = criterion(logits.reshape(-1, logits.shape[-1]), labels.reshape(-1))
 
             total_loss += loss.item()
     return total_loss / len(dataloader)
@@ -192,7 +196,7 @@ def main():
             best_val_loss = val_loss
             best_model = model
             counter = 0
-            # torch.save(best_model.state_dict(), "best_model.pth")
+            torch.save(best_model.state_dict(), "best_model_gpt2_big.pth")
         else:
             counter = counter + 1
         if counter >= patience:
@@ -200,7 +204,7 @@ def main():
             break
 
     # Save the best model
-    torch.save(best_model.state_dict(), "best_model_gpt2.pth")
+    torch.save(best_model.state_dict(), "best_model_gpt2_big.pth")
 
 
 if __name__ == "__main__":
