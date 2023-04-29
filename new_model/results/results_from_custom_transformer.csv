@@ -1,0 +1,229 @@
+title,real_abstract,generated_abstract,bleu_score,rouge_score,lime_score,meteor_score
+Sparsity-certifying Graph Decompositions,"  We describe a new algorithm, the $(k,\ell)$-pebble game with colors, and use
+it obtain a characterization of the family of $(k,\ell)$-sparse graphs and
+algorithmic solutions to a family of problems concerning tree decompositions of
+graphs. Special instances of sparse graphs appear in rigidity theory and have
+received increased attention in recent years. In particular, our colored
+pebbles generalize and strengthen the previous results of Lee and Streinu and
+give a new proof of the Tutte-Nash-Williams characterization of arboricity. We
+also present a new decomposition that certifies sparsity based on the
+$(k,\ell)$-pebble game with colors. Our work also exposes connections between
+pebble game algorithms and previous sparse graph algorithms by Gabow, Gabow and
+Westermann and Hendrickson.
+",velocities concerned impact dynamics periodic inside calculations two results uniform one color assuming functions data corresponding controllable atoms used symmetry coefficient data strength among small approach holes,0.0,0.019417471954002053,1.0,0.01876876876876877
+Strong Phase and $D^0-D^0bar$ mixing at BES-III,"  Most recently, both BaBar and Belle experiments found evidences of neutral
+$D$ mixing. In this paper, we discuss the constraints on the strong phase
+difference in $D^0 \to K\pi$ decay from the measurements of the mixing
+parameters, $y^\prime$, $y_{CP}$ and $x$ at the $B$ factories. The sensitivity
+of the measurement of the mixing parameter $y$ is estimated in BES-III
+experiment at $\psi(3770)$ peak. We also make an estimate on the measurements
+of the mixing rate $R_M$. Finally, the sensitivity of the strong phase
+difference at BES-III are obtained by using data near the $D\bar{D}$ threshold
+with CP tag technique at BES-III experiment.
+",assure depending distributed integrations scattering energy system period fourfold comments disks surface new curves approaches continuous integers using possible point observation,0.0,0.021978018427726693,1.0,0.011627906976744186
+Meta-Stable Brane Configuration of Product Gauge Groups,"  Starting from the N=1 SU(N_c) x SU(N_c') gauge theory with fundamental and
+bifundamental flavors, we apply the Seiberg dual to the first gauge group and
+obtain the N=1 dual gauge theory with dual matters including the gauge
+singlets. By analyzing the F-term equations of the superpotential, we describe
+the intersecting type IIA brane configuration for the meta-stable
+nonsupersymmetric vacua of this gauge theory. By introducing an orientifold
+6-plane, we generalize to the case for N=1 SU(N_c) x SO(N_c') gauge theory with
+fundamental and bifundamental flavors. Finally, the N=1 SU(N_c) x Sp(N_c')
+gauge theory with matters is also described very briefly.
+",nuclei star one main low less rho may cycle phase translates paper fraction dipole meson resolution using,0.0,0.0,1.0,0.004244482173174873
+Spinor dipolar Bose-Einstein condensates; Classical spin approach,"  Magnetic dipole-dipole interaction dominated Bose-Einstein condensates are
+discussed under spinful situations. We treat the spin degrees of freedom as a
+classical spin vector, approaching from large spin limit to obtain an effective
+minimal Hamiltonian; a version extended from a non-linear sigma model. By
+solving the Gross-Pitaevskii equation we find several novel spin textures where
+the mass density and spin density are strongly coupled, depending upon trap
+geometries due to the long-range and anisotropic natures of the dipole-dipole
+interaction.
+",gives metallic connections backgrounds determine derived method function measurements include modeling process estimate noise source method odd force motion,0.0,0.0,1.0,0.012903225806451611
+"Nonlinear Dynamics of the Phonon Stimulated Emission in Microwave
+  Solid-State Resonator of the Nonautonomous Phaser Generator","  The microwave phonon stimulated emission (SE) has been experimentally and
+numerically investigated in a nonautonomous microwave acoustic quantum
+generator, called also microwave phonon laser or phaser (see previous works
+arXiv:cond-mat/0303188 ; arXiv:cond-mat/0402640 ; arXiv:nlin.CG/0703050)
+Phenomena of branching and long-time refractority (absence of the reaction on
+the external pulses) for deterministic chaotic and regular processes of SE were
+observed in experiments with various levels of electromagnetic pumping. At the
+pumping level growth, the clearly depined increasing of the number of
+coexisting SE states has been observed both in real physical experiments and in
+computer simulations. This confirms the analytical estimations of the branching
+density in the phase space. The nature of the refractority of SE pulses is
+closely connected with the pointed branching and reflects the crises of strange
+attractors, i.e. their collisions with unstable periodic components of the
+higher branches of SE states in the nonautonomous microwave phonon laser.
+",equilibrium path properties comparing interference mixes evolutional rays main distinct extracted morphism best length halo xray presence problem appears spin masses example approximately magnetic activity power dynamics temperature eg box,0.0,0.0,1.0,0.003223726627981947
+Phase diagram of Gaussian-core nematics,"  We study a simple model of a nematic liquid crystal made of parallel
+ellipsoidal particles interacting via a repulsive Gaussian law. After
+identifying the relevant solid phases of the system through a careful
+zero-temperature scrutiny of as many as eleven candidate crystal structures, we
+determine the melting temperature for various pressure values, also with the
+help of exact free energy calculations. Among the prominent features of this
+model are pressure-driven reentrant melting and the stabilization of a columnar
+phase for intermediate temperatures.
+",clusters paper hard subjective natural region almost global laser mass isometric obtained influence heavily confinement,0.0,0.0,1.0,0.0
+"High-spin to low-spin and orbital polarization transitions in
+  multiorbital Mott systems","  We study the interplay of crystal field splitting and Hund coupling in a
+two-orbital model which captures the essential physics of systems with two
+electrons or holes in the e_g shell. We use single site dynamical mean field
+theory with a recently developed impurity solver which is able to access strong
+couplings and low temperatures. The fillings of the orbitals and the location
+of phase boundaries are computed as a function of Coulomb repulsion, exchange
+coupling and crystal field splitting. We find that the Hund coupling can drive
+the system into a novel Mott insulating phase with vanishing orbital
+susceptibility. Away from half-filling, the crystal field splitting can induce
+an orbital selective Mott state.
+",confirm inhomogeneity damping evidence rich periodic normal techniques data besides mean high systems function nonequilibrium called behavior excellent relative relatively interfaces presented cm procedures,0.0,0.058823525813149015,1.0,0.013477088948787063
+"The Mass and Radius of the Unseen M-Dwarf Companion in the Single-Lined
+  Eclipsing Binary HAT-TR-205-013","  We derive masses and radii for both components in the single-lined eclipsing
+binary HAT-TR-205-013, which consists of a F7V primary and a late M-dwarf
+secondary. The system's period is short, $P=2.230736 \pm 0.000010$ days, with
+an orbit indistinguishable from circular, $e=0.012 \pm 0.021$. We demonstrate
+generally that the surface gravity of the secondary star in a single-lined
+binary undergoing total eclipses can be derived from characteristics of the
+light curve and spectroscopic orbit. This constrains the secondary to a unique
+line in the mass-radius diagram with $M/R^2$ = constant. For HAT-TR-205-013, we
+assume the orbit has been tidally circularized, and that the primary's rotation
+has been synchronized and aligned with the orbital axis. Our observed line
+broadening, $V_{\rm rot} \sin i_{\rm rot} = 28.9 \pm 1.0$ \kms, gives a primary
+radius of $R_{\rm A} = 1.28 \pm 0.04$ \rsun. Our light curve analysis leads to
+the radius of the secondary, $R_{\rm B} = 0.167 \pm 0.006$ \rsun, and the
+semimajor axis of the orbit, $a = 7.54 \pm 0.30 \rsun = 0.0351 \pm 0.0014$ AU.
+Our single-lined spectroscopic orbit and the semimajor axis then yield the
+individual masses, $M_{\rm B} = 0.124 \pm 0.010$ \msun and $M_{\rm A} = 1.04
+\pm 0.13$ \msun. Our result for HAT-TR-205-013 B lies above the theoretical
+mass-radius models from the Lyon group, consistent with results from
+double-lined eclipsing binaries. The method we describe offers the opportunity
+to study the very low end of the stellar mass-radius relation.
+",temperature cases regions andor methods random nonlocal transformations studied unconventional supposed originates cost reduction system obtained model also obtained reduced andor short almost parameter algebra space entropy dynamics system spinorbit investigated limitation states charge first radial appears chain performing obtained anisotropy uniformly highpt different electrode completelymixed general stability lengths series deduce first vertical number spaced favor spin order field,0.0,0.0,1.0,0.01967799642218247
+On-line Viterbi Algorithm and Its Relationship to Random Walks,"  In this paper, we introduce the on-line Viterbi algorithm for decoding hidden
+Markov models (HMMs) in much smaller than linear space. Our analysis on
+two-state HMMs suggests that the expected maximum memory used to decode
+sequence of length $n$ with $m$-state HMM can be as low as $\Theta(m\log n)$,
+without a significant slow-down compared to the classical Viterbi algorithm.
+Classical Viterbi algorithm requires $O(mn)$ space, which is impractical for
+analysis of long DNA sequences (such as complete human genome chromosomes) and
+for continuous data streams. We also experimentally demonstrate the performance
+of the on-line Viterbi algorithm on a simple HMM for gene finding on both
+simulated and real DNA sequences.
+",stars amplitudes particular photons including shown distribution classify charge correlation quantum galactic compressibility elements plausible available maximum,0.0,0.01980197739829468,1.0,0.004029008863819501
+Experimental efforts in search of 76Ge Neutrinoless Double Beta Decay,"  Neutrinoless double beta decay is one of the most sensitive approaches in
+non-accelerator particle physics to take us into a regime of physics beyond the
+standard model. This article is a brief review of the experiments in search of
+neutrinoless double beta decay from 76Ge. Following a brief introduction of the
+process of double beta decay from 76Ge, the results of the very first
+experiments IGEX and Heidelberg-Moscow which give indications of the existence
+of possible neutrinoless double beta decay mode has been reviewed. Then ongoing
+efforts to substantiate the early findings are presented and the Majorana
+experiment as a future experimental approach which will allow a very detailed
+study of the neutrinoless decay mode is discussed.
+",gravity whereas linear metrics geometry systematic less good multiscale grain definition fall phase transition responsible besides ms stages residing dopant means via properties,0.0,0.0,1.0,0.0044603033006244425
+"Nilpotent symmetry invariance in the superfield formulation: the
+  (non-)Abelian 1-form gauge theories","  We capture the off-shell as well as the on-shell nilpotent
+Becchi-Rouet-Stora-Tyutin (BRST) and anti-BRST symmetry invariance of the
+Lagrangian densities of the four (3 + 1)-dimensional (4D) (non-)Abelian 1-form
+gauge theories within the framework of the superfield formalism. In particular,
+we provide the geometrical interpretations for (i) the above nilpotent symmetry
+invariance, and (ii) the above Lagrangian densities, in the language of the
+specific quantities defined in the domain of the above superfield formalism.
+Some of the subtle points, connected with the 4D (non-)Abelian 1-form gauge
+theories, are clarified within the framework of the above superfield formalism
+where the 4D ordinary gauge theories are considered on the (4, 2)-dimensional
+supermanifold parametrized by the four spacetime coordinates x^\mu (with \mu =
+0, 1, 2, 3) and a pair of Grassmannian variables \theta and \bar\theta. One of
+the key results of our present investigation is a great deal of simplification
+in the geometrical understanding of the nilpotent (anti-)BRST symmetry
+invariance.
+",orbits galaxy black model growth could dots formation phase theory mean likely description unsuccessful spacetimes ms occupancy quantum prediction system signal curves stably early computing confirmed inhomogeneity since system lines bound consistent network yields show orbit,0.0,0.0,1.0,0.016666666666666666
+Littlewood-Richardson polynomials,"  We introduce a family of rings of symmetric functions depending on an
+infinite sequence of parameters. A distinguished basis of such a ring is
+comprised by analogues of the Schur functions. The corresponding structure
+coefficients are polynomials in the parameters which we call the
+Littlewood-Richardson polynomials. We give a combinatorial rule for their
+calculation by modifying an earlier result of B. Sagan and the author. The new
+rule provides a formula for these polynomials which is manifestly positive in
+the sense of W. Graham. We apply this formula for the calculation of the
+product of equivariant Schubert classes on Grassmannians which implies a
+stability property of the structure coefficients. The first manifestly positive
+formula for such an expansion was given by A. Knutson and T. Tao by using
+combinatorics of puzzles while the stability property was not apparent from
+that formula. We also use the Littlewood-Richardson polynomials to describe the
+multiplication rule in the algebra of the Casimir elements for the general
+linear Lie algebra in the basis of the quantum immanants constructed by A.
+Okounkov and G. Olshanski.
+",half regime perfect exist fact accurate diffusivity attractor field production within theory range energetics system electrodynamics classical magnetic moreover technique using late show masses lattices observations transformation appropriate whole via well integrity results,0.0,0.014925369421921172,1.0,0.011655011655011654
+"Lagrangian quantum field theory in momentum picture. IV. Commutation
+  relations for free fields","  Possible (algebraic) commutation relations in the Lagrangian quantum theory
+of free (scalar, spinor and vector) fields are considered from mathematical
+view-point. As sources of these relations are employed the Heisenberg
+equations/relations for the dynamical variables and a specific condition for
+uniqueness of the operators of the dynamical variables (with respect to some
+class of Lagrangians). The paracommutation relations or some their
+generalizations are pointed as the most general ones that entail the validity
+of all Heisenberg equations. The simultaneous fulfillment of the Heisenberg
+equations and the uniqueness requirement turn to be impossible. This problem is
+solved via a redefinition of the dynamical variables, similar to the normal
+ordering procedure and containing it as a special case. That implies
+corresponding changes in the admissible commutation relations. The introduction
+of the concept of the vacuum makes narrow the class of the possible commutation
+relations; in particular, the mentioned redefinition of the dynamical variables
+is reduced to normal ordering. As a last restriction on that class is imposed
+the requirement for existing of an effective procedure for calculating vacuum
+mean values. The standard bilinear commutation relations are pointed as the
+only known ones that satisfy all of the mentioned conditions and do not
+contradict to the existing data.
+",one direct optimization supergiant stable space curvatures main balance constants black sample magnetically tens onshell improper energy made standard nearinfrared problem show longer pattern region poor consider related optical effects chain prove one decreases unified necessary first extremely detector results nature function large experimental find analysis distribution walls resulting effective variation classification,0.0,0.03658536156826344,1.0,0.026595744680851064
+Anisotropic thermo-elasticity in 2D -- Part I: A unified approach,"  In this note we develop tools and techniques for the treatment of anisotropic
+thermo-elasticity in two space dimensions. We use a diagonalisation technique
+to obtain properties of the characteristic roots of the full symbol of the
+system in order to prove $L^p$--$L^q$ decay rates for its solutions.
+",obscures two apparent phase stray emission ordinary measured transferring magnetization cosmology stars physics neighbourhood theory also,0.0,0.036363632238017,1.0,0.009784735812133072
+I-V characteristics of the vortex state in MgB2 thin films,"  The current-voltage (I-V) characteristics of various MgB2 films have been
+studied at different magnetic fields parallel to c-axis. At fields \mu0H
+between 0 and 5T, vortex liquid-glass transitions were found in the I-V
+isotherms. Consistently, the I-V curves measured at different temperatures show
+a scaling behavior in the framework of quasi-two-dimension (quasi-2D) vortex
+glass theory. However, at \mu0 H >= 5T, a finite dissipation was observed down
+to the lowest temperature here, T=1.7K, and the I-V isotherms did not scale in
+terms of any known scaling law, of any dimensionality. We suggest that this may
+be caused by a mixture of \sigma band vortices and \pi band quasiparticles.
+Interestingly, the I-V curves at zero magnetic field can still be scaled
+according to the quasi-2D vortex glass formalism, indicating an equivalent
+effect of self-field due to persistent current and applied magnetic field.
+",analogous received state scenarios angular walks temperature hidden metadata dark electronphonon mode example contrast measurements property lines play inertia localization quantum series allows distances orbits infrared imaginary associated peculiar,0.0,0.015384611918343975,1.0,0.013531799729364006
+Magnetic Fingerprints of sub-100 nm Fe Nanodots,"  Sub-100 nm nanomagnets not only are technologically important, but also
+exhibit complex magnetization reversal behaviors as their dimensions are
+comparable to typical magnetic domain wall widths. Here we capture magnetic
+""fingerprints"" of 1 billion Fe nanodots as they undergo a single domain to
+vortex state transition, using a first-order reversal curve (FORC) method. As
+the nanodot size increases from 52 nm to 67 nm, the FORC diagrams reveal
+striking differences, despite only subtle changes in their major hysteresis
+loops. The 52 nm nanodots exhibit single domain behavior and the coercivity
+distribution extracted from the FORC distribution agrees well with a
+calculation based on the measured nanodot size distribution. The 58 and 67 nm
+nanodots exhibit vortex states, where the nucleation and annihilation of the
+vortices are manifested as butterfly-like features in the FORC distribution and
+confirmed by micromagnetic simulations. Furthermore, the FORC method gives
+quantitative measures of the magnetic phase fractions, and vortex nucleation
+and annihilation fields.
+",arising two sources network calculated represented particular chains astronomy functions black large law early stopping law operator radiofrequency dimension free also negligible equation terms room ultracold al population mass gives effect multiscale limiting rings triple stemming new show physical dependent,0.0,0.02857142455204138,1.0,0.02179327521793275
+An online repository of Swift/XRT light curves of GRBs,"  Context. Swift data are revolutionising our understanding of Gamma Ray
+Bursts. Since bursts fade rapidly, it is desirable to create and disseminate
+accurate light curves rapidly.
+  Aims. To provide the community with an online repository of X-ray light
+curves obtained with Swift. The light curves should be of the quality expected
+of published data, but automatically created and updated so as to be
+self-consistent and rapidly available. Methods. We have produced a suite of
+programs which automatically generates Swift/XRT light curves of GRBs. Effects
+of the damage to the CCD, automatic readout-mode switching and pile-up are
+appropriately handled, and the data are binned with variable bin durations, as
+necessary for a fading source.
+  Results. The light curve repository website
+(http://www.swift.ac.uk/xrt_curves) contains light curves, hardness ratios and
+deep images for every GRB which Swift's XRT has observed. When new GRBs are
+detected, light curves are created and updated within minutes of the data
+arriving at the UK Swift Science Data Centre.
+",necessary quantum coupled curves applelike determined density spin compact test analyzed also respect efficient conditions particles double component states order additional either introduced states search functional driven introduction boundary space,0.0,0.028571425286735074,1.0,0.00889679715302491
