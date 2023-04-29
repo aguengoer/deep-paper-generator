@@ -57,7 +57,7 @@
       <recent name="$PROJECT_DIR$/new_model" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.generate_abstracts_from_title_pre_trained_gpt2">
+  <component name="RunManager" selected="Python.generate_abstracts_from_title_fine_tuned_gpt2">
     <configuration name="PipelineExecutor" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="nlp-pipeline" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -146,7 +146,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="generate_abstracts_from_title_pre_trained_gpt2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="generate_abstracts_from_title_fine_tuned_gpt2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="nlp-pipeline" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -159,7 +159,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/new_model/generate_abstracts_from_title_pre_trained_gpt2.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/new_model/generate_abstracts_from_title_fine_tuned_gpt2.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -192,7 +192,7 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.generate_abstracts_from_title_pre_trained_gpt2" />
+        <item itemvalue="Python.generate_abstracts_from_title_fine_tuned_gpt2" />
         <item itemvalue="Python.generate_abstract_from_pre_trained_model" />
         <item itemvalue="Python.generate_abstracts_from_title" />
         <item itemvalue="Python.traning_model_with_gpt_2_for_abstract" />
