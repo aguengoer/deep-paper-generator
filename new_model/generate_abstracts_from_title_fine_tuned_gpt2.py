@@ -10,6 +10,7 @@ from torchtext.data.metrics import bleu_score
 from lime.lime_text import LimeTextExplainer
 import json
 from tqdm import tqdm
+from nltk.translate.bleu_score import sentence_bleu
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -59,7 +60,8 @@ def evaluate_model(model, test_data):
         print("real abstract: ", real_abstract)
         print("best generated abstract: ", generated_abstract)
 
-        bleu = bleu_score([generated_abstract.split()], [real_abstract.split()])
+        # bleu = bleu_score([generated_abstract.split()], [real_abstract.split()])
+        bleu = sentence_bleu([real_abstract.split()], generated_abstract.split(), weights=(1, 0, 0, 0))
         bleu_scores.append(bleu)
 
         rouge_score = rouge.get_scores(generated_abstract, real_abstract, avg=True)
@@ -71,26 +73,15 @@ def evaluate_model(model, test_data):
 
         # Calculate the METEOR score
         meteor = single_meteor_score(tokenized_reference, tokenized_hypothesis)
-
-        def predict_proba(texts):
-            with torch.no_grad():
-                outputs = []
-                for text in texts:
-                    generated_abstracts = generate_abstract(model, text, len(real_abstract.split()))
-                    bleu = bleu_score([generated_abstracts[0].split()], [real_abstract.split()])
-                    outputs.append([1 - bleu, bleu])
-            return torch.tensor(outputs).float().numpy()
-
-        exp = explainer.explain_instance(title, predict_proba, num_features=5, num_samples=10)
-        lime_scores.append(exp.score)
         meteor_scores.append(meteor)
+
+
         print("bleuscores: ", bleu_scores)
         print("rouge_scores: ", rouge_scores)
-        print("limes_scores: ", lime_scores)
         print("meteor_scores: ", meteor_scores)
 
         results.append({"title": title, "real_abstract": real_abstract, "generated_abstract": generated_abstract,
-                        "bleu_score": bleu, "rouge_score": rouge_score['rouge-l']['f'], "lime_score": exp.score,
+                        "bleu_score": bleu, "rouge_score": rouge_score['rouge-l']['f'],
                         "meteor_score": meteor})
 
     return pd.DataFrame(results)
@@ -101,7 +92,7 @@ def main():
     model = GPT2Model().to(device)
     model.load_state_dict(torch.load(model_path, map_location=device))
 
-    with open("test_data_10.json", "r") as f:
+    with open("test_data_100.json", "r") as f:
         test_data = json.load(f)
 
     results_df = evaluate_model(model, test_data)
@@ -109,18 +100,16 @@ def main():
 
     avg_bleu_score = results_df["bleu_score"].mean()
     avg_rouge_score = results_df["rouge_score"].mean()
-    avg_lime_score = results_df["lime_score"].mean()
     avg_meteor_score = results_df["meteor_score"].mean()
 
     print(f"Average BLEU score: {avg_bleu_score}")
     print(f"Average ROUGE-L score: {avg_rouge_score}")
-    print(f"Average LIME score: {avg_lime_score}")
     print(f"Average METEOR score: {avg_meteor_score}")
 
     # Save results_df to CSV file
     results_df.to_csv("results_from_fine-tuned-gpt2.csv",
                       columns=["title", "real_abstract", "generated_abstract", "bleu_score", "rouge_score",
-                               "lime_score", "meteor_score"],
+                               "meteor_score"],
                       index=False)
 
 
